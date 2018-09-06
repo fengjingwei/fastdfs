@@ -1,8 +1,8 @@
 package com.hengxunda.dfs.core.fastdfs;
 
-import com.hengxunda.dfs.base.ErrorCode;
-import com.hengxunda.dfs.base.config.SystemConfig;
+import com.hengxunda.dfs.base.BaseErrorCode;
 import com.hengxunda.dfs.base.spring.SpringContext;
+import com.hengxunda.dfs.listener.InitConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -19,7 +19,7 @@ import java.util.concurrent.*;
 @Slf4j
 public class HttpClient {
 
-    private SystemConfig config = SpringContext.getBean(SystemConfig.class);
+    private InitConfig config = SpringContext.getBean(InitConfig.class);
 
     private static final int NEED_BATCH_UPLOAD_SIZE = 1024 * 1024; // 大于1M分批上传
     private static final int UPLOAD_BUFFER_SIZE = 1024 * 1024; // 上传缓存
@@ -42,10 +42,10 @@ public class HttpClient {
      */
     private ExecutorService uploadExecutorService = new ThreadPoolExecutor(UPLOAD_THREAD_SIZE, UPLOAD_THREAD_SIZE, 0L,
             TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> {
-        Thread s = Executors.defaultThreadFactory().newThread(r);
-        s.setDaemon(true);
-        s.setName("DFS-UPLOAD-TASK-THREAD-" + s.getId());
-        return s;
+        Thread thread = Executors.defaultThreadFactory().newThread(r);
+        thread.setDaemon(true);
+        thread.setName("DFS-UPLOAD-TASK-THREAD-" + thread.getId());
+        return thread;
     });
 
     private HttpClient() {
@@ -136,8 +136,8 @@ public class HttpClient {
     private void releaseResourse(StorageClient1 client) {
         try {
             if (client != null) {
-                log.debug("release ：client->" + client + ",storageServer->" + client.getStorageServer()
-                        + ",trackerServer->" + client.getTrackerServer());
+                log.debug("release ：client-> " + client + ",storageServer-> " + client.getStorageServer()
+                        + ",trackerServer-> " + client.getTrackerServer());
 
                 if (client.getStorageServer() != null) {
                     client.getStorageServer().close();
@@ -237,7 +237,7 @@ public class HttpClient {
                 if (!(in instanceof BufferedInputStream)) {
                     in = new BufferedInputStream(in);
                 }
-                int readFlag = -1;
+                int readFlag;
                 byte[] bytes = new byte[UPLOAD_BUFFER_SIZE];
                 int uploadCount = 0; // 已上传字节数
                 while ((readFlag = in.read(bytes)) > 0) {
@@ -291,8 +291,8 @@ public class HttpClient {
      * @throws MyException
      * @throws IOException
      */
-    public ErrorCode httpDownloadFile(String fileId, HttpServletResponse response, boolean direct, String fileName,
-                                      String fileExtName) throws MyException {
+    public BaseErrorCode httpDownloadFile(String fileId, HttpServletResponse response, boolean direct, String fileName,
+                                          String fileExtName) throws MyException {
         StorageClient1 client = assignResourse(fileId);
         long fileLength = -1L;
         try {
@@ -303,7 +303,7 @@ public class HttpClient {
                 }
             }
             if (fileLength < 0) {
-                return ErrorCode.RESOURCE_NOT_FOUND;
+                return BaseErrorCode.RESOURCE_NOT_FOUND;
             } else {
                 response.setContentLengthLong(fileLength); // 这个必须在response.getOutputStream().write()之前调用
                 if (!direct) {
@@ -340,7 +340,7 @@ public class HttpClient {
         } finally {
             releaseResourse(client);
         }
-        return ErrorCode.OK;
+        return BaseErrorCode.OK;
     }
 
     /**
@@ -377,21 +377,4 @@ public class HttpClient {
         DFSUploadFileTask task = new DFSUploadFileTask(fileInfoId, in, groupName, extName);
         uploadExecutorService.execute(task);
     }
-
-    // /**
-    // * 提交一个下载任务<br>
-    // * 异步执行
-    // *
-    // * @param fileId
-    // * 文件id
-    // * @param out
-    // * 输出流
-    // * @param isClose
-    // * 是否在下载完成后关闭输出流
-    // */
-    // public void executeDownloadTask(String fileId, OutputStream out, boolean
-    // isClose) {
-    // DFSDownloadFileTask task = new DFSDownloadFileTask(fileId, out, isClose);
-    // downloadExecutorService.execute(task);
-    // }
 }

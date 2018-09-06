@@ -1,4 +1,4 @@
-package com.hengxunda.dfs.base.config;
+package com.hengxunda.dfs.listener;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
@@ -6,7 +6,8 @@ import org.springframework.stereotype.Service;
 
 @Data
 @Service
-public class SystemConfig {
+public class InitConfig {
+
     /**
      * 上传线程数
      */

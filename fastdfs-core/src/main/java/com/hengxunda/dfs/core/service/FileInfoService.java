@@ -1,6 +1,5 @@
 package com.hengxunda.dfs.core.service;
 
-import com.hengxunda.dfs.base.BaseService;
 import com.hengxunda.dfs.base.cache.CacheService;
 import com.hengxunda.dfs.core.entity.AppInfoEntity;
 import com.hengxunda.dfs.core.entity.FileInfoEntity;
@@ -14,7 +13,7 @@ import java.util.Date;
  * 文件信息服务类
  */
 @Service
-public class FileInfoService extends BaseService {
+public class FileInfoService {
 
     @Autowired
     private FileInfoMapper fileInfoMapper;
@@ -77,6 +76,5 @@ public class FileInfoService extends BaseService {
     public String getFileNameByFileId(String fileId) {
         return fileInfoMapper.getFileNameByFileId(fileId);
     }
-
 
 }

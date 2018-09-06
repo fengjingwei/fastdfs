@@ -1,6 +1,5 @@
 package com.hengxunda.dfs.api;
 
-import com.hengxunda.dfs.api.response.BaseResponse;
 import com.hengxunda.dfs.api.response.FileInfoIdData;
 import com.hengxunda.dfs.api.response.ServerData;
 import org.apache.commons.codec.CharEncoding;
@@ -21,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class APIHttpUtils {
-
-    private static final String utf8 = CharEncoding.UTF_8;
 
     private static final RequestConfig requestConfig = RequestConfig.custom()
             .setSocketTimeout(30000)
@@ -53,9 +50,9 @@ public abstract class APIHttpUtils {
             response = httpClient.execute(request);
             // 判断网络连接状态码是否正常(0--200都数正常)
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                result = EntityUtils.toString(response.getEntity(), utf8);
+                result = EntityUtils.toString(response.getEntity(), CharEncoding.UTF_8);
                 data = GsonUtils.parseObject(result, ServerData.class);
-                if (data.getResult() != BaseResponse.RESP_OK) {
+                if (data.getResult() != HttpStatus.SC_OK) {
                     throw new MyException("get error resp from core server on " + url + ", resp:" + result);
                 }
             }
@@ -94,11 +91,11 @@ public abstract class APIHttpUtils {
         try {
             String result;
             HttpPost request = new HttpPost(url);
-            List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+            List<BasicNameValuePair> params = new ArrayList<>();
             params.add(new BasicNameValuePair("appKey", appKey));
             params.add(new BasicNameValuePair("fileName", fileName));
             params.add(new BasicNameValuePair("fileLength", String.valueOf(fileLength)));
-            request.setEntity(new UrlEncodedFormEntity(params, CharsetUtils.get(utf8)));
+            request.setEntity(new UrlEncodedFormEntity(params, CharsetUtils.get(CharEncoding.UTF_8)));
             request.setConfig(requestConfig);
             // 获取当前客户端对象
             httpClient = HttpClients.createDefault();
@@ -106,9 +103,9 @@ public abstract class APIHttpUtils {
             response = httpClient.execute(request);
             // 判断网络连接状态码是否正常
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                result = EntityUtils.toString(response.getEntity(), utf8);
+                result = EntityUtils.toString(response.getEntity(), CharEncoding.UTF_8);
                 FileInfoIdData data = GsonUtils.parseObject(result, FileInfoIdData.class);
-                if (data.getResult() == BaseResponse.RESP_OK) {
+                if (data.getResult() == HttpStatus.SC_OK) {
                     fileInfoId = data.getBody().getFileInfoId();
                 } else {
                     throw new MyException("get error from  core server on " + url + ", resp:" + result);
@@ -150,7 +147,7 @@ public abstract class APIHttpUtils {
             List<BasicNameValuePair> params = new ArrayList<>();
             params.add(new BasicNameValuePair("fileId", fileId));
             params.add(new BasicNameValuePair("fileInfoId", String.valueOf(fileInfoId)));
-            request.setEntity(new UrlEncodedFormEntity(params, CharsetUtils.get(utf8)));
+            request.setEntity(new UrlEncodedFormEntity(params, CharsetUtils.get(CharEncoding.UTF_8)));
             request.setConfig(requestConfig);
             // 获取当前客户端对象
             httpClient = HttpClients.createDefault();
@@ -191,7 +188,7 @@ public abstract class APIHttpUtils {
             HttpPost request = new HttpPost(url);
             List<BasicNameValuePair> params = new ArrayList<>();
             params.add(new BasicNameValuePair("fileId", fileId));
-            request.setEntity(new UrlEncodedFormEntity(params, CharsetUtils.get(utf8)));
+            request.setEntity(new UrlEncodedFormEntity(params, CharsetUtils.get(CharEncoding.UTF_8)));
             // 获取当前客户端对象
             httpClient = HttpClients.createDefault();
             // 通过请求对象获取响应对象

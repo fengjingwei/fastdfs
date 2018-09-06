@@ -5,7 +5,8 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class BaseEntity {
+public abstract class BaseEntity {
+
     /**
      * 创建日期
      */

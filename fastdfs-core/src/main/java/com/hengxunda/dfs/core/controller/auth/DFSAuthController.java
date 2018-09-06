@@ -1,7 +1,7 @@
 package com.hengxunda.dfs.core.controller.auth;
 
 import com.hengxunda.dfs.base.BaseConntroller;
-import com.hengxunda.dfs.base.ErrorCode;
+import com.hengxunda.dfs.base.BaseErrorCode;
 import com.hengxunda.dfs.base.cache.CacheService;
 import com.hengxunda.dfs.core.entity.AppInfoEntity;
 import com.hengxunda.dfs.core.entity.FileInfoEntity;
@@ -19,9 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedInputStream;
 
-/**
- * 需要鉴权的接口
- */
 @Slf4j
 @RestController
 @RequestMapping(value = "/dfs/auth")
@@ -35,22 +32,20 @@ public class DFSAuthController extends BaseConntroller {
         int fileInfoId;
         try {
             String fileName = file.getOriginalFilename();
-
             String appKey = request.getHeader(HEADER_APP_KEY);
             fileInfoId = fileInfoService.addFileInfo(appKey, FileInfoEntity.FILE_ACCESS_TYPE_BELONGS_AUTH, fileName, file.getSize());
             AppInfoEntity appInfo = CacheService.APP_INFO_CACHE.get(appKey);
             BufferedInputStream bis = new BufferedInputStream(file.getInputStream());
-            HttpClient client = HttpClient.getInstance();
-            client.executeUploadTask(fileInfoId, bis, appInfo.getGroupName(), FilenameUtils.getExtension(fileName));
+            HttpClient.getInstance().executeUploadTask(fileInfoId, bis, appInfo.getGroupName(), FilenameUtils.getExtension(fileName));
         } catch (Exception e) {
             log.error("upload file error!", e);
-            return getResponseByCode(ErrorCode.SERVER_ERROR);
+            return getResponseByCode(BaseErrorCode.SERVER_ERROR);
         }
         if (fileInfoId > 0) {
             String body = "{\"id\":" + fileInfoId + "}";
             return getResponseOKWithBody(body);
         } else {
-            return getResponseByCode(ErrorCode.SERVER_ERROR);
+            return getResponseByCode(BaseErrorCode.SERVER_ERROR);
         }
     }
 

@@ -1,7 +1,6 @@
 package com.hengxunda.dfs.core.service;
 
-import com.hengxunda.dfs.base.BaseService;
-import com.hengxunda.dfs.base.ErrorCode;
+import com.hengxunda.dfs.base.BaseErrorCode;
 import com.hengxunda.dfs.base.cache.CacheService;
 import com.hengxunda.dfs.core.entity.AppInfoEntity;
 import com.hengxunda.dfs.core.mapper.AppInfoMapper;
@@ -12,16 +11,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * 应用服务类
  */
 @Slf4j
 @Service
-public class AppInfoService extends BaseService {
+public class AppInfoService {
 
     @Autowired
     private AppInfoMapper appInfoMapper;
+
+    private static final int TIMSTAMP_ERROR_SECONDS = 2 * 60 * 60; // 客户端的发送请求时间与服务器的时间相差超过多少秒是无效的
 
     /**
      * 将应用信息载入缓存
@@ -65,39 +67,35 @@ public class AppInfoService extends BaseService {
      * @param appKey    应用编码
      * @param timestamp 时间戳
      * @param sign      MD5(appKey + '$' + appSecret + '$' + 时间戳)
-     * @return ErrorCode
+     * @return BaseErrorCode
      */
-    public ErrorCode checkAuth(String appKey, String timestamp, String sign) {
-        ErrorCode result = ErrorCode.OK;
+    public BaseErrorCode checkAuth(String appKey, String timestamp, String sign) {
+        BaseErrorCode result = BaseErrorCode.OK;
         AppInfoEntity app = getAppInfo(appKey);
 
         if (app == null) {
             log.warn("app info not found! appKey:{}", appKey);
-            return ErrorCode.APP_NOT_EXIST;
+            return BaseErrorCode.APP_NOT_EXIST;
         }
 
         if (app.getStatus() == null || app.getStatus().intValue() != AppInfoEntity.APP_STATUS_OK) {
             log.warn("app stopped ! appKey:{}", appKey);
-            return ErrorCode.APP_STOPPED; // 应用已停用
+            return BaseErrorCode.APP_STOPPED; // 应用已停用
         }
 
-        StringBuilder seq = new StringBuilder(256);
-        seq.append(appKey);
-        seq.append(SIGN_SPLIT);
-        seq.append(app.getAppSecret());
-        seq.append(SIGN_SPLIT);
-        seq.append(timestamp);
-        String md5Sign = MD5Utils.md5(seq.toString());
+        StringJoiner joiner = new StringJoiner("$");
+        joiner.add(appKey).add(app.getAppSecret()).add(timestamp);
+        String md5Sign = MD5Utils.md5(joiner.toString());
         if (!sign.equalsIgnoreCase(md5Sign)) {
             log.warn("sign check error ! appKey:{}, expect:{},but get:{}", appKey, md5Sign, sign);
-            return ErrorCode.APP_AUTH_FAILURE; // 签名校验失败
+            return BaseErrorCode.APP_AUTH_FAILURE; // 签名校验失败
         }
 
         int timestampCheck = DateUtils.getSecondsToNow(timestamp);
         if (timestampCheck < 0 || timestampCheck > TIMSTAMP_ERROR_SECONDS) {
             log.warn("timestamp error ! appKey:{}, timstamp:{}, timestampCheck:{}", appKey, timestamp,
                     timestampCheck);
-            return ErrorCode.TIMESTAMP_ERROR;
+            return BaseErrorCode.TIMESTAMP_ERROR;
         }
         return result;
     }

@@ -1,16 +1,17 @@
 package com.hengxunda.dfs.api.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FileInfoIdData extends BaseResponse {
+public class FileInfoIdData {
 
     private FileInfoId body;
+
+    private int result;
 
     @Data
     @NoArgsConstructor
@@ -19,5 +20,4 @@ public class FileInfoIdData extends BaseResponse {
 
         public Integer fileInfoId;
     }
-
 }

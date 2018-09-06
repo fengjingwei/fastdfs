@@ -1,6 +1,7 @@
 package com.hengxunda.dfs.api;
 
 import com.hengxunda.dfs.api.response.ServerData;
+import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,9 +41,6 @@ public class DFSAppClient {
     private String clientAppKey;
     private String clientGroupName;
 
-    /**
-     * 线程池
-     */
     private ExecutorService executorService = null;
 
     public static DFSAppClient instance() {
@@ -72,15 +70,11 @@ public class DFSAppClient {
             }
 
             executorService = new ThreadPoolExecutor(CORE_THREAD_SIZE, CORE_THREAD_SIZE, 0L, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<Runnable>(), new ThreadFactory() {
-
-                @Override
-                public Thread newThread(Runnable r) {
-                    Thread s = Executors.defaultThreadFactory().newThread(r);
-                    s.setDaemon(true);
-                    s.setName("DFS-HTTP-TASK-THREAD-" + s.getId());
-                    return s;
-                }
+                    new LinkedBlockingQueue<>(), r -> {
+                Thread thread = Executors.defaultThreadFactory().newThread(r);
+                thread.setDaemon(true);
+                thread.setName("DFS-HTTP-TASK-THREAD-" + thread.getId());
+                return thread;
             });
 
             if (this.config.getHttpServerUrl() == null || this.config.getHttpServerUrl().trim().length() == 0) {
@@ -248,7 +242,7 @@ public class DFSAppClient {
      * @throws MyException
      */
     public String uploadFile(InputStream is, String fileName, long fileLength) throws MyException {
-        Integer fileInfoId = -1;
+        Integer fileInfoId;
         String extName = FilenameUtils.getExtension(fileName);
         try {
             if (START_UPLOAD_URL == null || END_UPLOAD_URL == null || clientGroupName == null) {
@@ -273,7 +267,7 @@ public class DFSAppClient {
     private String uploadFile(File file, NameValuePair[] meta_list) throws FileNotFoundException, MyException {
         String fileName = file.getName();
         String extName = FilenameUtils.getExtension(fileName);
-        Integer fileInfoId = -1;
+        Integer fileInfoId;
         try {
             long fileLength = file.length();
             if (START_UPLOAD_URL == null || END_UPLOAD_URL == null || clientGroupName == null) {
@@ -344,7 +338,7 @@ public class DFSAppClient {
         } catch (Exception e) {
             throw new MyException(e.getMessage());
         } finally {
-            IOUtils.closeQuietly(in);
+            org.apache.commons.io.IOUtils.closeQuietly(in);
             releaseResourse(client);
         }
 
@@ -432,7 +426,7 @@ public class DFSAppClient {
      */
     public int deleteFile(String fileId) throws MyException {
         StorageClient1 client = null;
-        int result = -1;
+        int result;
         if (DELETE_URL == null || clientGroupName == null) {
             throw new MyException("DFS app api sdk not initialized");
         }
@@ -463,39 +457,28 @@ public class DFSAppClient {
         return DOWNLOAD_URL;
     }
 
+    @AllArgsConstructor
     class EndUpLoadHttpTask implements Runnable {
 
         private String url;
         private String fileId;
         private Integer fileInfoId;
 
-        public EndUpLoadHttpTask(String url, String fileId, Integer fileInfoId) {
-            this.url = url;
-            this.fileId = fileId;
-            this.fileInfoId = fileInfoId;
-        }
-
         @Override
         public void run() {
             APIHttpUtils.endUpload(url, fileId, fileInfoId);
         }
-
     }
 
+    @AllArgsConstructor
     class DeleteHttpTask implements Runnable {
 
         private String url;
         private String fileId;
 
-        public DeleteHttpTask(String url, String fileId) {
-            this.url = url;
-            this.fileId = fileId;
-        }
-
         @Override
         public void run() {
             APIHttpUtils.delete(url, fileId);
         }
-
     }
 }

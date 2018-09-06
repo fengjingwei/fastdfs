@@ -31,7 +31,7 @@
 - result:该方法会返回0表示删除成功，其他表示失败.
 
 # **fastdfs 下载示例说明** #
-- http://192.168.0.180:8808/dfs/v1/download?fileId=group1/M00/00/00/wKgCe1nOFtaEb-XWAAAAAPCUA8M333.jpg&direct=true
+- http://127.0.0.1:8808/dfs/v1/download?fileId=group1/M00/00/00/wKgABFuQ2PWEbNsOAAAAADUuUeE667.png&direct=true
 - fileId:上传文件成功后返回的fileId字符串
 - direct:表示是否直接显示，非直接显示会提示下载，默认是非直接显示。
 

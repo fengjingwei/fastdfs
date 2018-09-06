@@ -3,6 +3,7 @@ package com.hengxunda.dfs.core.fastdfs;
 import com.hengxunda.dfs.base.spring.SpringContext;
 import com.hengxunda.dfs.core.entity.FileInfoEntity;
 import com.hengxunda.dfs.core.service.FileInfoService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -10,6 +11,7 @@ import java.io.InputStream;
 import java.util.Date;
 
 @Slf4j
+@AllArgsConstructor
 public class DFSUploadFileTask implements Runnable {
 
     private FileInfoService fileInfoService = SpringContext.getBean(FileInfoService.class);

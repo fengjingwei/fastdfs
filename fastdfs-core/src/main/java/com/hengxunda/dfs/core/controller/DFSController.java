@@ -1,7 +1,7 @@
 package com.hengxunda.dfs.core.controller;
 
 import com.hengxunda.dfs.base.BaseConntroller;
-import com.hengxunda.dfs.base.ErrorCode;
+import com.hengxunda.dfs.base.BaseErrorCode;
 import com.hengxunda.dfs.core.entity.AppInfoEntity;
 import com.hengxunda.dfs.core.entity.FileInfoEntity;
 import com.hengxunda.dfs.core.fastdfs.HttpClient;
@@ -14,7 +14,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.csource.fastdfs.StorageClient1;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -41,13 +44,12 @@ public class DFSController extends BaseConntroller {
      * @return
      */
     @RequestMapping(value = "/v1/sUpload")
-    public @ResponseBody
-    String startUpload(@RequestParam("appKey") String appKey,
-                       @RequestParam("fileName") String fileName, @RequestParam("fileLength") Long fileLength) {
+    public String startUpload(@RequestParam("appKey") String appKey,
+                              @RequestParam("fileName") String fileName,
+                              @RequestParam("fileLength") Long fileLength) {
         int fileInfoId = -1;
         try {
-            fileInfoId = fileInfoService.addFileInfo(appKey, FileInfoEntity.FILE_ACCESS_TYPE_NO_AUTH, fileName,
-                    fileLength);
+            fileInfoId = fileInfoService.addFileInfo(appKey, FileInfoEntity.FILE_ACCESS_TYPE_NO_AUTH, fileName, fileLength);
         } catch (Exception e) {
             log.error("add file info error !", e);
         }
@@ -55,7 +57,7 @@ public class DFSController extends BaseConntroller {
             String body = "{\"fileInfoId\":" + fileInfoId + "}";
             return getResponseOKWithBody(body);
         } else {
-            return getResponseByCode(ErrorCode.SERVER_ERROR);
+            return getResponseByCode(BaseErrorCode.SERVER_ERROR);
         }
     }
 
@@ -67,7 +69,6 @@ public class DFSController extends BaseConntroller {
      */
     @RequestMapping(value = "/v1/eUpload")
     public void endUpload(@RequestParam("fileInfoId") Integer fileInfoId, @RequestParam("fileId") String fileId) {
-        // 上传成功执行一些保存fileId与业务数据映射关系的操作
         if (fileId != null) {
             FileInfoEntity fileInfo = new FileInfoEntity();
             int pos = fileId.indexOf(StorageClient1.SPLIT_GROUP_NAME_AND_FILENAME_SEPERATOR);
@@ -90,8 +91,7 @@ public class DFSController extends BaseConntroller {
      * @return
      */
     @RequestMapping(value = "/v1/server")
-    public @ResponseBody
-    String server(@RequestParam("appKey") String appKey) {
+    public String server(@RequestParam("appKey") String appKey) {
         String tracker_servers = HttpClient.getInstance().getTrackersConfig();
         AppInfoEntity app = appInfoService.getAppInfo(appKey);
         String groupName;
@@ -101,7 +101,7 @@ public class DFSController extends BaseConntroller {
             body = "{\"trackerServers\":\"" + tracker_servers + "\",\"groupName\":\"" + groupName + "\"}";
             return getResponseOKWithBody(body);
         } else {
-            return getResponseByCode(ErrorCode.APP_NOT_EXIST);
+            return getResponseByCode(BaseErrorCode.APP_NOT_EXIST);
         }
     }
 
@@ -109,7 +109,7 @@ public class DFSController extends BaseConntroller {
      * 下载
      *
      * @param fileId   fastdfs返回的fileId
-     * @param direct   是否直接显示，true表示可以直接显示,false表示可以下载保存成文件(默认)
+     * @param direct   是否直接显示，true表示可以直接显示，false表示可以下载保存成文件(默认)
      * @param response
      * @throws IOException
      */
@@ -117,7 +117,7 @@ public class DFSController extends BaseConntroller {
     public void downloadFile(@RequestParam("fileId") String fileId, boolean direct, HttpServletResponse request,
                              HttpServletResponse response) throws IOException {
         try {
-            response.setCharacterEncoding(UTF8);
+            response.setCharacterEncoding(CharEncoding.UTF_8);
             response.setHeader("Connection", "close"); // 注意区分大小写
             String fileExtName = FilenameUtils.getExtension(fileId);
             String contextType = MimeUtils.guessMimeTypeFromExtension(fileExtName);
@@ -138,15 +138,16 @@ public class DFSController extends BaseConntroller {
                 bytes = fileName.getBytes();
             }
             fileName = new String(bytes, CharEncoding.ISO_8859_1); // 各浏览器基本都支持ISO编码
-            ErrorCode eCode = HttpClient.getInstance().httpDownloadFile(fileId, response, direct, fileName,
+            BaseErrorCode eCode = HttpClient.getInstance().httpDownloadFile(fileId, response, direct, fileName,
                     fileExtName);
-            if (eCode != ErrorCode.OK) {
+            if (eCode != BaseErrorCode.OK) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
         } catch (Exception e) {
             log.error("download file error! fileId:" + fileId, e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } finally {
+
         }
     }
 

@@ -13,7 +13,7 @@ public class AppInfoEntity extends BaseEntity implements Serializable {
 
     public static final int APP_STATUS_OK = 1; // 启用
 
-    public static final int APP_STATUS_STOP = 2;// 停用
+    public static final int APP_STATUS_STOP = 2; // 停用
 
     /**
      * 应用唯一编码

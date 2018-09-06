@@ -1,5 +1,6 @@
 package com.hengxunda.dfs.api.response;
 
+import com.hengxunda.dfs.api.BaseResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,5 +21,4 @@ public class ServerData extends BaseResponse {
 
         private String groupName; // 当前appKey对应的组
     }
-
 }

@@ -2,6 +2,7 @@ package com.hengxunda;
 
 import com.hengxunda.dfs.utils.MD5Utils;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpStatus;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -89,7 +90,7 @@ public class FastdfsCoreApplicationTests {
             out.write(end_data);
             out.flush();
             int status = connection.getResponseCode();
-            if (status == 200) { // 不等于 200个表示异常
+            if (status == HttpStatus.SC_OK) { // 不等于 200个表示异常
                 // 定义BufferedReader输入流来读取URL的响应
                 reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String line = null;
@@ -121,7 +122,7 @@ public class FastdfsCoreApplicationTests {
         return seq.toString();
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         testUpload();
     }
 }
