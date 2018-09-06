@@ -1,0 +1,24 @@
+package com.hengxunda.dfs.api.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ServerData extends BaseResponse {
+
+    private ServerDataBody body;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public class ServerDataBody {
+
+        private String trackerServers; // tracker 服务器可以是多个 如:10.0.11.201:22122,10.0.11.202:22122,10.0.11.203:22122
+
+        private String groupName; // 当前appKey对应的组
+    }
+
+}
