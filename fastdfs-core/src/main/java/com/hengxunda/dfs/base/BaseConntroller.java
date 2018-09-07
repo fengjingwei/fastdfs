@@ -1,7 +1,5 @@
 package com.hengxunda.dfs.base;
 
-import org.springframework.http.MediaType;
-
 public class BaseConntroller {
 
     public final String HEADER_APP_KEY = "dfs-request-app-key"; // 应用appKey
@@ -19,5 +17,4 @@ public class BaseConntroller {
     public String getResponseOKWithBody(String body) {
         return "{\"result\":" + BaseErrorCode.OK.getCode() + ",\"body\":" + body + "}";
     }
-
 }

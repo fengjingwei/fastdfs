@@ -313,7 +313,7 @@ public class DFSAppClient {
                 if (!(in instanceof BufferedInputStream)) {
                     in = new BufferedInputStream(in);
                 }
-                int readFlag = -1;
+                int readFlag;
                 byte[] bytes = new byte[UPLOAD_BUFFER_SIZE];
                 while ((readFlag = in.read(bytes)) > 0) {
                     if (fileId == null) { // 需要新上传文件
@@ -338,7 +338,7 @@ public class DFSAppClient {
         } catch (Exception e) {
             throw new MyException(e.getMessage());
         } finally {
-            org.apache.commons.io.IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(in);
             releaseResourse(client);
         }
 

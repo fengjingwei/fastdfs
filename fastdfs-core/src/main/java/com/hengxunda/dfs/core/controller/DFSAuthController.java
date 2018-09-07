@@ -1,4 +1,4 @@
-package com.hengxunda.dfs.core.controller.auth;
+package com.hengxunda.dfs.core.controller;
 
 import com.hengxunda.dfs.base.BaseConntroller;
 import com.hengxunda.dfs.base.BaseErrorCode;
