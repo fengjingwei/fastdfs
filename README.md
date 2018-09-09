@@ -4,7 +4,7 @@
 ## Features ##
 # 1.分布式文件系统架构说明 #
 ## - fastdfs-client(FastDFS 客户端) ##
-- fastdfs提供的java客户端api，java相关功能都在基于这个基础上封装，扩展，第三方应用不需要关心该接口.
+- fastdfs提供的java客户端api，java相关功能都基于这个基础上封装，扩展，第三方应用不需要关心该接口.
 ## - fastdfs-core(HTTP服务器) ##
 - 基于spring boot实现，提供http接口服务.
 - 提供http服务器信息获取，http上传，http下载，删除上报，该服务会记录文件的基本信息，其中服务器信息获取，上传上报都由fastdfs-app自动完成，第三方应用不需要关心.
@@ -32,8 +32,8 @@
 
 # **fastdfs 下载示例说明** #
 - http://127.0.0.1:8808/dfs/v1/download?fileId=group1/M00/00/00/wKgABFuQ2PWEbNsOAAAAADUuUeE667.png&direct=true
-- fileId:上传文件成功后返回的fileId字符串
-- direct:表示是否直接显示，非直接显示会提示下载，默认是非直接显示。
+- fileId:上传文件成功后返回的fileId字符串.
+- direct:表示是否直接显示，非直接显示会提示下载，默认是非直接显示.
 
 ## Prerequisite ##
 1. JDK 1.8+

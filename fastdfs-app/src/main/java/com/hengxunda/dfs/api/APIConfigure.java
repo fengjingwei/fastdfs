@@ -14,6 +14,7 @@ public class APIConfigure {
      * 应用编码
      */
     private final String appKey;
+
     /**
      * DFS HTTP服务器的地址
      * http://xxxx.com:8080/

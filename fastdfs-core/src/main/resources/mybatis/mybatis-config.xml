@@ -18,4 +18,9 @@
         <setting name="jdbcTypeForNull" value="NULL"/>
     </settings>
 
+    <typeAliases>
+        <typeAlias type="com.hengxunda.dfs.core.entity.AppInfoEntity" alias="AppInfoEntity"/>
+        <typeAlias type="com.hengxunda.dfs.core.entity.FileInfoEntity" alias="FileInfoEntity"/>
+    </typeAliases>
+
 </configuration>

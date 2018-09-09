@@ -5,12 +5,11 @@
 
     <cache/>
 
-    <select id="getAllAppInfo" flushCache="true" resultType="com.hengxunda.dfs.core.entity.AppInfoEntity">
+    <select id="getAllAppInfo" flushCache="true" resultType="AppInfoEntity">
 		SELECT * FROM dfs_app_info ORDER BY create_date DESC
 	</select>
 
-    <select id="getAppInfoByAppKey" flushCache="true" resultType="com.hengxunda.dfs.core.entity.AppInfoEntity"
-            statementType="PREPARED">
+    <select id="getAppInfoByAppKey" flushCache="true" resultType="AppInfoEntity" statementType="PREPARED">
 		SELECT * FROM dfs_app_info WHERE app_key = #{appKey}
 	</select>
 

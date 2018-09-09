@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Data
 @Service
-public class InitConfig {
+public class InitializeConfig {
 
     /**
      * 上传线程数

@@ -2,7 +2,7 @@ package com.hengxunda.dfs.core.fastdfs;
 
 import com.hengxunda.dfs.base.BaseErrorCode;
 import com.hengxunda.dfs.base.spring.SpringContext;
-import com.hengxunda.dfs.listener.InitConfig;
+import com.hengxunda.dfs.listener.InitializeConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -19,7 +19,7 @@ import java.util.concurrent.*;
 @Slf4j
 public class HttpClient {
 
-    private InitConfig config = SpringContext.getBean(InitConfig.class);
+    private InitializeConfig config = SpringContext.getBean(InitializeConfig.class);
 
     private static final int NEED_BATCH_UPLOAD_SIZE = 1024 * 1024; // 大于1M分批上传
     private static final int UPLOAD_BUFFER_SIZE = 1024 * 1024; // 上传缓存
@@ -295,20 +295,20 @@ public class HttpClient {
                                           String fileExtName) throws MyException {
         StorageClient1 client = assignResourse(fileId);
         long fileLength = -1L;
+        boolean flags = false;
         try {
             if (fileLength < 0) {
+                flags = true;
                 FileInfo fileInfo = client.get_file_info1(fileId);
                 if (fileInfo != null) {
                     fileLength = fileInfo.getFileSize();
                 }
             }
-            if (fileLength < 0) {
+            if (flags) {
                 return BaseErrorCode.RESOURCE_NOT_FOUND;
             } else {
-                response.setContentLengthLong(fileLength); // 这个必须在response.getOutputStream().write()之前调用
+                response.setContentLengthLong(fileLength);
                 if (!direct) {
-                    // response.setHeader("Content-Disposition", "attachment;filename=" +
-                    // URLEncoder.encode(fileName, UTF8));
                     response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", fileName));
                 }
             }

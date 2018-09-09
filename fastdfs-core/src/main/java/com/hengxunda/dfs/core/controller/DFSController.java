@@ -133,7 +133,7 @@ public class DFSController extends BaseConntroller {
             String userAgent = request.getHeader("User-Agent");
             byte[] bytes;
             if (userAgent != null) {
-                bytes = userAgent.contains("MSIE") ? fileName.getBytes() : fileName.getBytes("UTF-8");
+                bytes = userAgent.contains("MSIE") ? fileName.getBytes() : fileName.getBytes(CharEncoding.UTF_8);
             } else {
                 bytes = fileName.getBytes();
             }
