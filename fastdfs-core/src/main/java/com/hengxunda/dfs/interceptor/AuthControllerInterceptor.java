@@ -1,6 +1,6 @@
 package com.hengxunda.dfs.interceptor;
 
-import com.hengxunda.dfs.base.BaseConntroller;
+import com.hengxunda.dfs.base.BaseController;
 import com.hengxunda.dfs.base.BaseErrorCode;
 import com.hengxunda.dfs.base.spring.SpringContext;
 import com.hengxunda.dfs.core.service.AppInfoService;
@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
-public class AuthControllerInterceptor extends BaseConntroller implements HandlerInterceptor {
+public class AuthControllerInterceptor extends BaseController implements HandlerInterceptor {
 
     private AppInfoService appInfoService = SpringContext.getBean(AppInfoService.class);
 

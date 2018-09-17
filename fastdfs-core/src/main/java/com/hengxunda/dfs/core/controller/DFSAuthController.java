@@ -1,6 +1,6 @@
 package com.hengxunda.dfs.core.controller;
 
-import com.hengxunda.dfs.base.BaseConntroller;
+import com.hengxunda.dfs.base.BaseController;
 import com.hengxunda.dfs.base.BaseErrorCode;
 import com.hengxunda.dfs.base.cache.CacheService;
 import com.hengxunda.dfs.core.entity.AppInfoEntity;
@@ -22,7 +22,7 @@ import java.io.BufferedInputStream;
 @Slf4j
 @RestController
 @RequestMapping(value = "/dfs/auth")
-public class DFSAuthController extends BaseConntroller {
+public class DFSAuthController extends BaseController {
 
     @Autowired
     private FileInfoService fileInfoService;

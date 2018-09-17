@@ -1,6 +1,6 @@
 package com.hengxunda.dfs.base;
 
-public class BaseConntroller {
+public abstract class BaseController {
 
     public final String HEADER_APP_KEY = "dfs-request-app-key"; // 应用appKey
     public final String HEADER_TIMESTAMP = "dfs-request-timestamp"; // 时间戳

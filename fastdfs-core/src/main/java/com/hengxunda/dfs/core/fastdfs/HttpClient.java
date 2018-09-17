@@ -23,7 +23,7 @@ public class HttpClient {
 
     private static final int NEED_BATCH_UPLOAD_SIZE = 1024 * 1024; // 大于1M分批上传
     private static final int UPLOAD_BUFFER_SIZE = 1024 * 1024; // 上传缓存
-    private static final int DOWNLOAD_BUFFER_SIZE = 128 * 1024; // 下载缓存 这里只有http下载，所有将缓存设小，所以也不适应大于10M的文件下载
+    private static final int DOWNLOAD_BUFFER_SIZE = 128 * 1024; // 下载缓存，这里只有http下载，所有将缓存设小，所以也不适应大于10M的文件下载
 
     private static HttpClient instance = new HttpClient();
 
@@ -295,16 +295,14 @@ public class HttpClient {
                                           String fileExtName) throws MyException {
         StorageClient1 client = assignResourse(fileId);
         long fileLength = -1L;
-        boolean flags = false;
         try {
             if (fileLength < 0) {
-                flags = true;
                 FileInfo fileInfo = client.get_file_info1(fileId);
                 if (fileInfo != null) {
                     fileLength = fileInfo.getFileSize();
                 }
             }
-            if (flags) {
+            if (fileLength < 0) {
                 return BaseErrorCode.RESOURCE_NOT_FOUND;
             } else {
                 response.setContentLengthLong(fileLength);

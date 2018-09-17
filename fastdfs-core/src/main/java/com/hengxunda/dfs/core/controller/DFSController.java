@@ -1,6 +1,6 @@
 package com.hengxunda.dfs.core.controller;
 
-import com.hengxunda.dfs.base.BaseConntroller;
+import com.hengxunda.dfs.base.BaseController;
 import com.hengxunda.dfs.base.BaseErrorCode;
 import com.hengxunda.dfs.core.entity.AppInfoEntity;
 import com.hengxunda.dfs.core.entity.FileInfoEntity;
@@ -27,7 +27,7 @@ import java.util.Date;
 @Slf4j
 @RestController
 @RequestMapping(value = "/dfs")
-public class DFSController extends BaseConntroller {
+public class DFSController extends BaseController {
 
     @Autowired
     private FileInfoService fileInfoService;

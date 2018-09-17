@@ -5,9 +5,6 @@ import lombok.Data;
 
 import java.io.OutputStream;
 
-/**
- * 下载任务，异步执行
- */
 @Data
 @AllArgsConstructor
 public class DFSDownloadFileTask implements Runnable {
@@ -20,6 +17,7 @@ public class DFSDownloadFileTask implements Runnable {
 
     @Override
     public void run() {
+
     }
 
 }
