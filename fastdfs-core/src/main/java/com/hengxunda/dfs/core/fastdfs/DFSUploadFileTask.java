@@ -16,11 +16,17 @@ public class DFSUploadFileTask implements Runnable {
 
     private FileInfoService fileInfoService = SpringContext.getBean(FileInfoService.class);
 
-    private Integer fileInfoId; // 对应dfs_file_info的id
+    /**
+     * 对应dfs_file_info的id
+     */
+    private Integer fileInfoId;
     private File fileToUpload;
     private InputStream in;
     private String fileExtName;
-    private String groupName; // 上传到的组
+    /**
+     * 上传到的组
+     */
+    private String groupName;
 
     public DFSUploadFileTask(int fileInfoId, File file, String groupName) {
         this.fileInfoId = fileInfoId;

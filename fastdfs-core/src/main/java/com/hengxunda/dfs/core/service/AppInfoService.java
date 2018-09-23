@@ -23,7 +23,10 @@ public class AppInfoService {
     @Autowired
     private AppInfoMapper appInfoMapper;
 
-    private static final int TIMSTAMP_ERROR_SECONDS = 2 * 60 * 60; // 客户端的发送请求时间与服务器的时间相差超过多少秒是无效的
+    /**
+     * 客户端的发送请求时间与服务器的时间相差超过多少秒是无效的
+     */
+    private static final int TIMSTAMP_ERROR_SECONDS = 2 * 60 * 60;
 
     /**
      * 将应用信息载入缓存
@@ -80,7 +83,8 @@ public class AppInfoService {
 
         if (app.getStatus() == null || app.getStatus().intValue() != AppInfoEntity.APP_STATUS_OK) {
             log.warn("app stopped ! appKey:{}", appKey);
-            return BaseErrorCode.APP_STOPPED; // 应用已停用
+            // 应用已停用
+            return BaseErrorCode.APP_STOPPED;
         }
 
         StringJoiner joiner = new StringJoiner("$");
@@ -88,7 +92,8 @@ public class AppInfoService {
         String md5Sign = MD5Utils.md5(joiner.toString());
         if (!sign.equalsIgnoreCase(md5Sign)) {
             log.warn("sign check error ! appKey:{}, expect:{},but get:{}", appKey, md5Sign, sign);
-            return BaseErrorCode.APP_AUTH_FAILURE; // 签名校验失败
+            // 签名校验失败
+            return BaseErrorCode.APP_AUTH_FAILURE;
         }
 
         int timestampCheck = DateUtils.getSecondsToNow(timestamp);

@@ -3,7 +3,6 @@ package com.hengxunda.dfs.api;
 import com.hengxunda.dfs.api.response.ServerData;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.csource.common.MyException;
 import org.csource.common.NameValuePair;
@@ -15,16 +14,31 @@ import java.util.concurrent.*;
 
 public class DFSAppClient {
 
-    private static int UPLOAD_BUFFER_SIZE = 1024 * 1024; // 上传缓存
-    private static int DOWNLOAD_BUFFER_SIZE = 1024 * 1024; // 下载缓存
-    private static int NEED_BATCH_UPLOAD_SIZE = UPLOAD_BUFFER_SIZE; // 需要分批上传的大小
-    private static int CORE_THREAD_SIZE = 5; // 线程池大小
+    /**
+     * 上传缓存
+     */
+    private static int UPLOAD_BUFFER_SIZE = 1024 * 1024;
 
-    private static final String v1Server = "dfs/v1/server";
-    private static final String v1Supload = "dfs/v1/sUpload";
-    private static final String v1Eupload = "dfs/v1/eUpload";
-    private static final String v1Del = "dfs/v1/del";
-    private static final String v1Download = "dfs/v1/download";
+    /**
+     * 下载缓存
+     */
+    private static int DOWNLOAD_BUFFER_SIZE = 1024 * 1024;
+
+    /**
+     * 需要分批上传的大小
+     */
+    private static int NEED_BATCH_UPLOAD_SIZE = UPLOAD_BUFFER_SIZE;
+
+    /**
+     * 线程池大小
+     */
+    private static int CORE_THREAD_SIZE = 5;
+
+    private static final String V1_SERVER = "dfs/v1/server";
+    private static final String V1_SUPLOAD = "dfs/v1/sUpload";
+    private static final String V1_EUPLOAD = "dfs/v1/eUpload";
+    private static final String V1_DELETE = "dfs/v1/delete";
+    private static final String V1_DOWNLOAD = "dfs/v1/download";
 
     private static String GET_SERVER_URL = null;
     private static String START_UPLOAD_URL = null;
@@ -86,11 +100,11 @@ public class DFSAppClient {
                 baseServerUrl += "/";
             }
 
-            GET_SERVER_URL = baseServerUrl + v1Server;
-            START_UPLOAD_URL = baseServerUrl + v1Supload;
-            END_UPLOAD_URL = baseServerUrl + v1Eupload;
-            DELETE_URL = baseServerUrl + v1Del;
-            DOWNLOAD_URL = baseServerUrl + v1Download;
+            GET_SERVER_URL = baseServerUrl + V1_SERVER;
+            START_UPLOAD_URL = baseServerUrl + V1_SUPLOAD;
+            END_UPLOAD_URL = baseServerUrl + V1_EUPLOAD;
+            DELETE_URL = baseServerUrl + V1_DELETE;
+            DOWNLOAD_URL = baseServerUrl + V1_DOWNLOAD;
 
             clientAppKey = this.config.getAppKey();
             ServerData serverData = APIHttpUtils.getServerInfo(GET_SERVER_URL, clientAppKey);
@@ -258,13 +272,13 @@ public class DFSAppClient {
     /**
      * 上传文件
      *
-     * @param file      需要上传的文件
-     * @param meta_list 文件额外属性
+     * @param file     需要上传的文件
+     * @param metaList 文件额外属性
      * @return 返回fileId
      * @throws FileNotFoundException
      * @throws MyException
      */
-    private String uploadFile(File file, NameValuePair[] meta_list) throws FileNotFoundException, MyException {
+    private String uploadFile(File file, NameValuePair[] metaList) throws FileNotFoundException, MyException {
         String fileName = file.getName();
         String extName = FilenameUtils.getExtension(fileName);
         Integer fileInfoId;
@@ -277,7 +291,7 @@ public class DFSAppClient {
         } catch (Exception e) {
             throw new MyException(e.getMessage());
         }
-        return uploadFile(new FileInputStream(file), clientGroupName, extName, meta_list, fileInfoId);
+        return uploadFile(new FileInputStream(file), clientGroupName, extName, metaList, fileInfoId);
     }
 
     /**
@@ -286,12 +300,12 @@ public class DFSAppClient {
      * @param in         需要上传的输入流
      * @param groupName  指定文件上传的组（卷），为空表示不指定
      * @param extName    文件扩展名(不能包含'.')
-     * @param meta_list  文件额外属性
+     * @param metaList   文件额外属性
      * @param fileInfoId core server生成的文件id
      * @return 返回fileId
      * @throws MyException
      */
-    private String uploadFile(InputStream in, String groupName, String extName, NameValuePair[] meta_list,
+    private String uploadFile(InputStream in, String groupName, String extName, NameValuePair[] metaList,
                               Integer fileInfoId) throws MyException {
         if (in == null) {
             throw new MyException("inputstream is null !");
@@ -301,7 +315,8 @@ public class DFSAppClient {
         try {
             boolean isSetGroup = false;
             if (StringUtils.isNotEmpty(groupName)) {
-                isSetGroup = true; // 上传到指定的组（卷）
+                // 上传到指定的组（卷）
+                isSetGroup = true;
             }
             if (isSetGroup) {
                 client = assignResourseByGroupName(groupName);
@@ -309,18 +324,20 @@ public class DFSAppClient {
                 client = assignResourse();
             }
             long length = in.available();
-            if (length > NEED_BATCH_UPLOAD_SIZE) { // 超过指定大小就进行分批上传
+            // 超过指定大小就进行分批上传
+            if (length > NEED_BATCH_UPLOAD_SIZE) {
                 if (!(in instanceof BufferedInputStream)) {
                     in = new BufferedInputStream(in);
                 }
                 int readFlag;
                 byte[] bytes = new byte[UPLOAD_BUFFER_SIZE];
                 while ((readFlag = in.read(bytes)) > 0) {
-                    if (fileId == null) { // 需要新上传文件
+                    // 需要新上传文件
+                    if (fileId == null) {
                         if (isSetGroup) {
-                            fileId = client.upload_appender_file1(groupName, bytes, extName, meta_list);
+                            fileId = client.upload_appender_file1(groupName, bytes, extName, metaList);
                         } else {
-                            fileId = client.upload_appender_file1(bytes, extName, meta_list);
+                            fileId = client.upload_appender_file1(bytes, extName, metaList);
                         }
                     } else {
                         client.append_file1(fileId, bytes, 0, readFlag);
@@ -330,15 +347,19 @@ public class DFSAppClient {
                 byte[] fileBytes = new byte[(int) length];
                 in.read(fileBytes);
                 if (isSetGroup) {
-                    fileId = client.upload_file1(groupName, fileBytes, extName, meta_list);
+                    fileId = client.upload_file1(groupName, fileBytes, extName, metaList);
                 } else {
-                    fileId = client.upload_file1(fileBytes, extName, meta_list);
+                    fileId = client.upload_file1(fileBytes, extName, metaList);
                 }
             }
         } catch (Exception e) {
             throw new MyException(e.getMessage());
         } finally {
-            IOUtils.closeQuietly(in);
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             releaseResourse(client);
         }
 
@@ -411,7 +432,11 @@ public class DFSAppClient {
         } finally {
             releaseResourse(client);
             if (isClose) {
-                IOUtils.closeQuietly(out);
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

@@ -1777,6 +1777,7 @@ public class StorageClient {
      * @param out output stream for writing file content
      * @return 0 success, return none zero(errno) if fail
      */
+    @Override
     public int send(OutputStream out) throws IOException {
       out.write(this.fileBuff, this.offset, this.length);
 

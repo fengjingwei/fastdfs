@@ -75,6 +75,7 @@ public class TrackerServer {
     }
   }
 
+  @Override
   protected void finalize() throws Throwable {
     this.close();
   }

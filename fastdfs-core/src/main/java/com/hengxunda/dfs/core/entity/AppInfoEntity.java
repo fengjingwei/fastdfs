@@ -11,9 +11,15 @@ import java.io.Serializable;
 @Data
 public class AppInfoEntity extends BaseEntity implements Serializable {
 
-    public static final int APP_STATUS_OK = 1; // 启用
+    /**
+     * 启用
+     */
+    public static final int APP_STATUS_OK = 1;
 
-    public static final int APP_STATUS_STOP = 2; // 停用
+    /**
+     * 停用
+     */
+    public static final int APP_STATUS_STOP = 2;
 
     /**
      * 应用唯一编码

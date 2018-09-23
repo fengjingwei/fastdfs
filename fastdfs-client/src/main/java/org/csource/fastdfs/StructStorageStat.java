@@ -913,6 +913,7 @@ public class StructStorageStat extends StructBase {
    * @param bs     byte array
    * @param offset start offset
    */
+  @Override
   public void setFields(byte[] bs, int offset) {
     this.status = byteValue(bs, offset, fieldsArray[FIELD_INDEX_STATUS]);
     this.id = stringValue(bs, offset, fieldsArray[FIELD_INDEX_ID]);

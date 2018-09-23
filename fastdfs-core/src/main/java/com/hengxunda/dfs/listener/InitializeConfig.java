@@ -30,13 +30,13 @@ public class InitializeConfig {
      * 连接超时
      */
     @Value("${fastdfs.connect_timeout_in_seconds:5}")
-    private String connect_timeout_in_seconds;
+    private String connectTimeoutInSeconds;
 
     /**
      * 网络超时
      */
     @Value("${fastdfs.network_timeout_in_seconds:30}")
-    private String network_timeout_in_seconds;
+    private String networkTimeoutInSeconds;
 
     /**
      * 字符编码

@@ -5,7 +5,6 @@ import com.hengxunda.dfs.base.spring.SpringContext;
 import com.hengxunda.dfs.listener.InitializeConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.csource.common.MyException;
 import org.csource.common.NameValuePair;
@@ -21,17 +20,26 @@ public class HttpClient {
 
     private InitializeConfig config = SpringContext.getBean(InitializeConfig.class);
 
-    private static final int NEED_BATCH_UPLOAD_SIZE = 1024 * 1024; // 大于1M分批上传
-    private static final int UPLOAD_BUFFER_SIZE = 1024 * 1024; // 上传缓存
-    private static final int DOWNLOAD_BUFFER_SIZE = 128 * 1024; // 下载缓存，这里只有http下载，所有将缓存设小，所以也不适应大于10M的文件下载
+    /**
+     * 大于1M分批上传
+     */
+    private static final int NEED_BATCH_UPLOAD_SIZE = 1024 * 1024;
+    /**
+     * 上传缓存
+     */
+    private static final int UPLOAD_BUFFER_SIZE = 1024 * 1024;
+    /**
+     * 下载缓存，这里只有http下载，所有将缓存设小，所以也不适应大于10M的文件下载
+     */
+    private static final int DOWNLOAD_BUFFER_SIZE = 128 * 1024;
 
     private static HttpClient instance = new HttpClient();
 
-    private int UPLOAD_THREAD_SIZE = config.getUpload();
+    private int uploadThreadSize = config.getUpload();
 
     private TrackerClient trackerClient;
 
-    private String tracker_servers = null;
+    private String trackerServers = null;
 
     public static HttpClient getInstance() {
         return instance;
@@ -40,7 +48,7 @@ public class HttpClient {
     /**
      * 处理上传任务的线程池
      */
-    private ExecutorService uploadExecutorService = new ThreadPoolExecutor(UPLOAD_THREAD_SIZE, UPLOAD_THREAD_SIZE, 0L,
+    private ExecutorService uploadExecutorService = new ThreadPoolExecutor(uploadThreadSize, uploadThreadSize, 0L,
             TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> {
         Thread thread = Executors.defaultThreadFactory().newThread(r);
         thread.setDaemon(true);
@@ -53,8 +61,8 @@ public class HttpClient {
             Properties props = new Properties();
             props.setProperty(ClientGlobal.PROP_KEY_TRACKER_SERVERS, config.getTrackers());
             props.setProperty(ClientGlobal.PROP_KEY_CHARSET, config.getCharset());
-            props.setProperty(ClientGlobal.PROP_KEY_CONNECT_TIMEOUT_IN_SECONDS, config.getConnect_timeout_in_seconds());
-            props.setProperty(ClientGlobal.PROP_KEY_NETWORK_TIMEOUT_IN_SECONDS, config.getNetwork_timeout_in_seconds());
+            props.setProperty(ClientGlobal.PROP_KEY_CONNECT_TIMEOUT_IN_SECONDS, config.getConnectTimeoutInSeconds());
+            props.setProperty(ClientGlobal.PROP_KEY_NETWORK_TIMEOUT_IN_SECONDS, config.getNetworkTimeoutInSeconds());
             ClientGlobal.initByProperties(props);
         } catch (Exception e) {
             log.error("init fastdfs error", e);
@@ -64,16 +72,16 @@ public class HttpClient {
     }
 
     public String getTrackersConfig() {
-        if (StringUtils.isEmpty(tracker_servers)) {
+        if (StringUtils.isEmpty(trackerServers)) {
             try {
                 String trackerServersConf = config.getTrackers();
-                tracker_servers = trackerServersConf.trim();
+                trackerServers = trackerServersConf.trim();
             } catch (Exception e) {
                 log.error("init error", e);
                 System.exit(1);
             }
         }
-        return tracker_servers;
+        return trackerServers;
     }
 
     /**
@@ -186,16 +194,16 @@ public class HttpClient {
      *
      * @param file      需要上传的文件
      * @param groupName 指定文件上传的组（卷），为空表示不上指定
-     * @param meta_list 文件额外属性
+     * @param metaList  文件额外属性
      * @return 返回fileId
      * @throws FileNotFoundException
      * @throws MyException
      */
-    public String uploadFile(File file, String groupName, NameValuePair[] meta_list)
+    public String uploadFile(File file, String groupName, NameValuePair[] metaList)
             throws FileNotFoundException, MyException {
         String fileName = file.getName();
         String extName = FilenameUtils.getExtension(fileName);
-        return uploadFile(new FileInputStream(file), groupName, extName, meta_list);
+        return uploadFile(new FileInputStream(file), groupName, extName, metaList);
     }
 
     public String uploadFile(InputStream in, String extName) throws MyException {
@@ -206,8 +214,8 @@ public class HttpClient {
         return uploadFile(in, groupName, extName, null);
     }
 
-    public String uploadFile(InputStream in, String extName, NameValuePair[] meta_list) throws MyException {
-        return uploadFile(in, null, extName, meta_list);
+    public String uploadFile(InputStream in, String extName, NameValuePair[] metaList) throws MyException {
+        return uploadFile(in, null, extName, metaList);
     }
 
     /**
@@ -216,11 +224,11 @@ public class HttpClient {
      * @param in        需要上传的输入流
      * @param groupName 指定文件上传的组（卷），为空表示不指定
      * @param extName   文件扩展名(不能包含'.')
-     * @param meta_list 文件额外属性
+     * @param metaList  文件额外属性
      * @return 返回fileId
      * @throws MyException
      */
-    public String uploadFile(InputStream in, String groupName, String extName, NameValuePair[] meta_list)
+    public String uploadFile(InputStream in, String groupName, String extName, NameValuePair[] metaList)
             throws MyException {
         if (in == null) {
             throw new MyException("inputstream is null !");
@@ -231,21 +239,25 @@ public class HttpClient {
             long length = in.available();
             boolean isSetGroup = false;
             if (StringUtils.isNotEmpty(groupName)) {
-                isSetGroup = true; // 上传到指定的组（卷）
+                // 上传到指定的组（卷）
+                isSetGroup = true;
             }
-            if (length > NEED_BATCH_UPLOAD_SIZE) { // 超过指定大小就进行分批上传
+            // 超过指定大小就进行分批上传
+            if (length > NEED_BATCH_UPLOAD_SIZE) {
                 if (!(in instanceof BufferedInputStream)) {
                     in = new BufferedInputStream(in);
                 }
                 int readFlag;
                 byte[] bytes = new byte[UPLOAD_BUFFER_SIZE];
-                int uploadCount = 0; // 已上传字节数
+                // 已上传字节数
+                int uploadCount = 0;
                 while ((readFlag = in.read(bytes)) > 0) {
-                    if (fileId == null) { // 需要新上传文件
+                    // 需要新上传文件
+                    if (fileId == null) {
                         if (isSetGroup) {
-                            fileId = client.upload_appender_file1(groupName, bytes, extName, meta_list);
+                            fileId = client.upload_appender_file1(groupName, bytes, extName, metaList);
                         } else {
-                            fileId = client.upload_appender_file1(bytes, extName, meta_list);
+                            fileId = client.upload_appender_file1(bytes, extName, metaList);
                         }
                     } else {
                         client.append_file1(fileId, bytes, 0, readFlag);
@@ -259,9 +271,9 @@ public class HttpClient {
                 byte[] fileBytes = new byte[(int) length];
                 in.read(fileBytes);
                 if (isSetGroup) {
-                    fileId = client.upload_appender_file1(groupName, fileBytes, extName, meta_list);
+                    fileId = client.upload_appender_file1(groupName, fileBytes, extName, metaList);
                 } else {
-                    fileId = client.upload_appender_file1(fileBytes, extName, meta_list);
+                    fileId = client.upload_appender_file1(fileBytes, extName, metaList);
                 }
             }
         } catch (IOException e) {
@@ -273,8 +285,12 @@ public class HttpClient {
             log.error("upload file client error!", e);
             throw new MyException(e.getMessage());
         } finally {
-            IOUtils.closeQuietly(in);
             releaseResourse(client);
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return fileId;
@@ -312,7 +328,8 @@ public class HttpClient {
             }
             int bufferSize = DOWNLOAD_BUFFER_SIZE;
             if (fileLength > 10 * 1024 * 1024) {
-                bufferSize = 1024 * 1024; // 文件大于10M 将缓存设为1M
+                // 文件大于10M 将缓存设为1M
+                bufferSize = 1024 * 1024;
             }
             BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream(), bufferSize);
             int offset = 0;

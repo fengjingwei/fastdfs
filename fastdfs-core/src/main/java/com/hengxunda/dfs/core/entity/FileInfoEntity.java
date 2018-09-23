@@ -41,17 +41,38 @@ public class FileInfoEntity extends BaseEntity implements Serializable {
 
     private Integer id;
 
-    private String fileId; // fastdfs返回的fileId
+    /**
+     * fastdfs返回的fileId
+     */
+    private String fileId;
 
-    private String name; // 原始文件名
+    /**
+     * 原始文件名
+     */
+    private String name;
 
-    private long bytes; // 文件字节数
+    /**
+     * 文件字节数
+     */
+    private long bytes;
 
-    private String groupName; // 所存放的组编号与fastdfs的组名对应
+    /**
+     * 所存放的组编号与fastdfs的组名对应
+     */
+    private String groupName;
 
-    private Integer accessType; // 访问类型 1:所属应用鉴权访问,2:所有应用鉴权访问,3:无鉴权访问
+    /**
+     * 访问类型 1:所属应用鉴权访问,2:所有应用鉴权访问,3:无鉴权访问
+     */
+    private Integer accessType;
 
-    private String belongsApp; // 所属应用的编码
+    /**
+     * 所属应用的编码
+     */
+    private String belongsApp;
 
-    private Integer status; // 状态 1:创建成功,2:上传成功,3:已删除
+    /**
+     * 状态 1:创建成功,2:上传成功,3:已删除
+     */
+    private Integer status;
 }

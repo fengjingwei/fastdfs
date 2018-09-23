@@ -21,9 +21,12 @@ import java.util.List;
 
 public abstract class APIHttpUtils {
 
-    private static final RequestConfig requestConfig = RequestConfig.custom()
+    /**
+     * 设置请求和传输超时时间
+     */
+    private static final RequestConfig REQUEST_CONFIG = RequestConfig.custom()
             .setSocketTimeout(30000)
-            .setConnectTimeout(30000).build();//设置请求和传输超时时间
+            .setConnectTimeout(30000).build();
 
     /**
      * 获取ServerData
@@ -43,7 +46,7 @@ public abstract class APIHttpUtils {
             List<BasicNameValuePair> params = new ArrayList<>();
             params.add(new BasicNameValuePair("appKey", appKey));
             request.setEntity(new UrlEncodedFormEntity(params));
-            request.setConfig(requestConfig);
+            request.setConfig(REQUEST_CONFIG);
             // 获取当前客户端对象
             httpClient = HttpClients.createDefault();
             // 通过请求对象获取响应对象
@@ -96,7 +99,7 @@ public abstract class APIHttpUtils {
             params.add(new BasicNameValuePair("fileName", fileName));
             params.add(new BasicNameValuePair("fileLength", String.valueOf(fileLength)));
             request.setEntity(new UrlEncodedFormEntity(params, CharsetUtils.get(CharEncoding.UTF_8)));
-            request.setConfig(requestConfig);
+            request.setConfig(REQUEST_CONFIG);
             // 获取当前客户端对象
             httpClient = HttpClients.createDefault();
             // 通过请求对象获取响应对象
@@ -148,7 +151,7 @@ public abstract class APIHttpUtils {
             params.add(new BasicNameValuePair("fileId", fileId));
             params.add(new BasicNameValuePair("fileInfoId", String.valueOf(fileInfoId)));
             request.setEntity(new UrlEncodedFormEntity(params, CharsetUtils.get(CharEncoding.UTF_8)));
-            request.setConfig(requestConfig);
+            request.setConfig(REQUEST_CONFIG);
             // 获取当前客户端对象
             httpClient = HttpClients.createDefault();
             // 通过请求对象获取响应对象

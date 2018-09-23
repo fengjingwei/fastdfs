@@ -13,12 +13,17 @@ import java.util.List;
 public interface AppInfoMapper {
 
     /**
-     * 查询出所有应用信息
+     * 查询所有应用信息
+     *
+     * @return
      */
     List<AppInfoEntity> getAllAppInfo();
 
     /**
-     * 查询出指定应用信息
+     * 查询指定应用信息
+     *
+     * @param appKey
+     * @return
      */
     AppInfoEntity getAppInfoByAppKey(@Param("appKey") String appKey);
 }

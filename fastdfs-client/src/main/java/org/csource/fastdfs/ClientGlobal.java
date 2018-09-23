@@ -289,7 +289,9 @@ public class ClientGlobal {
     if (g_tracker_group != null) {
       InetSocketAddress[] trackerAddresses = g_tracker_group.tracker_servers;
       for (InetSocketAddress inetSocketAddress : trackerAddresses) {
-        if(trackerServers.length() > 0) trackerServers += ",";
+        if(trackerServers.length() > 0) {
+          trackerServers += ",";
+        }
         trackerServers += inetSocketAddress.toString().substring(1);
       }
     }

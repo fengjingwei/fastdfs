@@ -154,7 +154,9 @@ public class IniFileReader {
       ex.printStackTrace();
     } finally {
       try {
-        if (in != null) in.close();
+        if (in != null) {
+          in.close();
+        }
         //System.out.println("loadFrom...finally...in.close(); done");
       } catch (Exception ex) {
         ex.printStackTrace();
@@ -164,7 +166,9 @@ public class IniFileReader {
 
   private void readToParamTable(InputStream in) throws IOException {
     this.paramTable = new Hashtable();
-    if (in == null) return;
+    if (in == null) {
+      return;
+    }
     String line;
     String[] parts;
     String name;
@@ -204,8 +208,12 @@ public class IniFileReader {
       ex.printStackTrace();
     } finally {
       try {
-        if (bufferedReader != null) bufferedReader.close();
-        if (inReader != null) inReader.close();
+        if (bufferedReader != null) {
+          bufferedReader.close();
+        }
+        if (inReader != null) {
+          inReader.close();
+        }
         //System.out.println("readToParamTable...finally...bufferedReader.close();inReader.close(); done");
       } catch (Exception ex) {
         ex.printStackTrace();

@@ -92,13 +92,13 @@ public class DFSController extends BaseController {
      */
     @RequestMapping(value = "/v1/server")
     public String server(@RequestParam("appKey") String appKey) {
-        String tracker_servers = HttpClient.getInstance().getTrackersConfig();
+        String trackerServers = HttpClient.getInstance().getTrackersConfig();
         AppInfoEntity app = appInfoService.getAppInfo(appKey);
         String groupName;
         String body;
         if (app != null) {
             groupName = app.getGroupName();
-            body = "{\"trackerServers\":\"" + tracker_servers + "\",\"groupName\":\"" + groupName + "\"}";
+            body = "{\"trackerServers\":\"" + trackerServers + "\",\"groupName\":\"" + groupName + "\"}";
             return getResponseOKWithBody(body);
         } else {
             return getResponseByCode(BaseErrorCode.APP_NOT_EXIST);
@@ -118,7 +118,8 @@ public class DFSController extends BaseController {
                              HttpServletResponse response) throws IOException {
         try {
             response.setCharacterEncoding(CharEncoding.UTF_8);
-            response.setHeader("Connection", "close"); // 注意区分大小写
+            // 注意区分大小写
+            response.setHeader("Connection", "close");
             String fileExtName = FilenameUtils.getExtension(fileId);
             String contextType = MimeUtils.guessMimeTypeFromExtension(fileExtName);
             if (contextType != null) {
@@ -137,7 +138,8 @@ public class DFSController extends BaseController {
             } else {
                 bytes = fileName.getBytes();
             }
-            fileName = new String(bytes, CharEncoding.ISO_8859_1); // 各浏览器基本都支持ISO编码
+            // 各浏览器基本都支持ISO编码
+            fileName = new String(bytes, CharEncoding.ISO_8859_1);
             BaseErrorCode eCode = HttpClient.getInstance().httpDownloadFile(fileId, response, direct, fileName,
                     fileExtName);
             if (eCode != BaseErrorCode.OK) {
@@ -156,7 +158,7 @@ public class DFSController extends BaseController {
      *
      * @param fileId fastdfs返回的fileId
      */
-    @RequestMapping(value = "/v1/del")
+    @RequestMapping(value = "/v1/delete")
     public void deleteFile(@RequestParam("fileId") String fileId) {
         try {
             FileInfoEntity fileInfo = new FileInfoEntity();

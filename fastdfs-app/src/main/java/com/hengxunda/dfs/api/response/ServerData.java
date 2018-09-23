@@ -17,8 +17,14 @@ public class ServerData extends BaseResponse {
     @AllArgsConstructor
     public class ServerDataBody {
 
-        private String trackerServers; // tracker服务器可以是多个,如:10.0.11.201:22122,10.0.11.202:22122,10.0.11.203:22122
+        /**
+         * tracker服务器可以是多个,如:10.0.11.201:22122,10.0.11.202:22122,10.0.11.203:22122
+         */
+        private String trackerServers;
 
-        private String groupName; // 当前appKey对应的组
+        /**
+         * 当前appKey对应的组
+         */
+        private String groupName;
     }
 }

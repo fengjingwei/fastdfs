@@ -2,9 +2,20 @@ package com.hengxunda.dfs.base;
 
 public abstract class BaseController {
 
-    public final String HEADER_APP_KEY = "dfs-request-app-key"; // 应用appKey
-    public final String HEADER_TIMESTAMP = "dfs-request-timestamp"; // 时间戳
-    public final String HEADER_SIGN = "dfs-request-sign"; // 签名
+    /**
+     * 应用appKey
+     */
+    public final String HEADER_APP_KEY = "dfs-request-app-key";
+
+    /**
+     * 时间戳
+     */
+    public final String HEADER_TIMESTAMP = "dfs-request-timestamp";
+
+    /**
+     * 签名
+     */
+    public final String HEADER_SIGN = "dfs-request-sign";
 
     public String getResponseOK() {
         return "{\"result\":" + BaseErrorCode.OK.getCode() + "}";
