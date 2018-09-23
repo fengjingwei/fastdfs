@@ -1,5 +1,6 @@
 package com.hengxunda.dfs.core.fastdfs;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.hengxunda.dfs.base.BaseErrorCode;
 import com.hengxunda.dfs.base.spring.SpringContext;
 import com.hengxunda.dfs.listener.InitializeConfig;
@@ -24,10 +25,12 @@ public class HttpClient {
      * 大于1M分批上传
      */
     private static final int NEED_BATCH_UPLOAD_SIZE = 1024 * 1024;
+
     /**
      * 上传缓存
      */
     private static final int UPLOAD_BUFFER_SIZE = 1024 * 1024;
+
     /**
      * 下载缓存，这里只有http下载，所有将缓存设小，所以也不适应大于10M的文件下载
      */
@@ -41,20 +44,16 @@ public class HttpClient {
 
     private String trackerServers = null;
 
-    public static HttpClient getInstance() {
-        return instance;
-    }
+    private ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("DFS-UPLOAD-TASK-THREAD-%d").build();
 
     /**
      * 处理上传任务的线程池
      */
-    private ExecutorService uploadExecutorService = new ThreadPoolExecutor(uploadThreadSize, uploadThreadSize, 0L,
-            TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> {
-        Thread thread = Executors.defaultThreadFactory().newThread(r);
-        thread.setDaemon(true);
-        thread.setName("DFS-UPLOAD-TASK-THREAD-" + thread.getId());
-        return thread;
-    });
+    private ExecutorService uploadExecutorService = new ThreadPoolExecutor(uploadThreadSize, uploadThreadSize, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+
+    public static HttpClient getInstance() {
+        return instance;
+    }
 
     private HttpClient() {
         try {

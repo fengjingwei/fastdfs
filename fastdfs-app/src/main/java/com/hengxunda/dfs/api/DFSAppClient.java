@@ -1,5 +1,6 @@
 package com.hengxunda.dfs.api;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.hengxunda.dfs.api.response.ServerData;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
@@ -83,13 +84,8 @@ public class DFSAppClient {
                 CORE_THREAD_SIZE = this.config.getCoreThreadSize();
             }
 
-            executorService = new ThreadPoolExecutor(CORE_THREAD_SIZE, CORE_THREAD_SIZE, 0L, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<>(), r -> {
-                Thread thread = Executors.defaultThreadFactory().newThread(r);
-                thread.setDaemon(true);
-                thread.setName("DFS-HTTP-TASK-THREAD-" + thread.getId());
-                return thread;
-            });
+            ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("DFS-HTTP-TASK-THREAD-%d").build();
+            executorService = new ThreadPoolExecutor(CORE_THREAD_SIZE, CORE_THREAD_SIZE, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
 
             if (this.config.getHttpServerUrl() == null || this.config.getHttpServerUrl().trim().length() == 0) {
                 throw new MyException("init server error, http server url is empty!");
