@@ -46,7 +46,7 @@
 - Clone & Build
 > git clone https://github.com/fengjingwei/fastdfs.git
 > 
-> cd mall
+> cd fastdfs
 > 
 > mvn -DskipTests clean install -U
 
