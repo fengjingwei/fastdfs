@@ -101,7 +101,6 @@ public class HttpClient {
      * @throws MyException
      */
     private StorageClient1 assignResourse(String fileId) throws MyException {
-
         StorageClient1 client = new StorageClient1();
         try {
             if (client.getTrackerServer() == null
@@ -133,7 +132,7 @@ public class HttpClient {
             return client;
 
         } catch (Exception e) {
-            throw new MyException("connect to server error !");
+            throw new MyException("connect to server error!");
         }
     }
 
@@ -143,8 +142,7 @@ public class HttpClient {
     private void releaseResourse(StorageClient1 client) {
         try {
             if (client != null) {
-                log.debug("release ：client-> " + client + ",storageServer-> " + client.getStorageServer()
-                        + ",trackerServer-> " + client.getTrackerServer());
+                log.debug("release ：client-> " + client + ",storageServer-> " + client.getStorageServer() + ",trackerServer-> " + client.getTrackerServer());
 
                 if (client.getStorageServer() != null) {
                     client.getStorageServer().close();
@@ -230,7 +228,7 @@ public class HttpClient {
     public String uploadFile(InputStream in, String groupName, String extName, NameValuePair[] metaList)
             throws MyException {
         if (in == null) {
-            throw new MyException("inputstream is null !");
+            throw new MyException("inputstream is null!");
         }
         StorageClient1 client = assignResourse();
         String fileId = null;
@@ -349,8 +347,8 @@ public class HttpClient {
             log.error(e.getMessage(), e);
             throw new MyException(e.getMessage());
         } catch (Exception e) {
-            log.error("download file error ! fileId:" + fileId, e);
-            throw new MyException("download file error !");
+            log.error("download file error! fileId:" + fileId, e);
+            throw new MyException("download file error!");
         } finally {
             releaseResourse(client);
         }
@@ -361,7 +359,7 @@ public class HttpClient {
      * 删除文件
      *
      * @param fileId
-     * @return 0 成功,2文件不存在,其他值失败
+     * @return 0成功, 2文件不存在, 其他值失败
      * @throws IOException
      * @throws MyException
      */
@@ -379,7 +377,7 @@ public class HttpClient {
     }
 
     /**
-     * 提交一个上传任务<br>
+     * 提交一个上传任务
      * 异步执行
      *
      * @param fileInfoId 文件信息对应的id,上传成功后用于更新文件信息

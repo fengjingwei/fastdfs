@@ -34,9 +34,9 @@ public class AppInfoService {
      * @return
      */
     public void loadAppInfoToCache() {
-        List<AppInfoEntity> lstApps = appInfoMapper.getAllAppInfo();
-        if (lstApps != null && !lstApps.isEmpty()) {
-            for (AppInfoEntity app : lstApps) {
+        List<AppInfoEntity> appInfos = appInfoMapper.getAllAppInfo();
+        if (appInfos != null && !appInfos.isEmpty()) {
+            for (AppInfoEntity app : appInfos) {
                 CacheService.APP_INFO_CACHE.put(app.getAppKey(), app);
             }
         } else {
@@ -91,14 +91,14 @@ public class AppInfoService {
         joiner.add(appKey).add(app.getAppSecret()).add(timestamp);
         String md5Sign = MD5Utils.md5(joiner.toString());
         if (!sign.equalsIgnoreCase(md5Sign)) {
-            log.warn("sign check error ! appKey:{}, expect:{},but get:{}", appKey, md5Sign, sign);
+            log.warn("sign check error! appKey:{}, expect:{}, but get:{}", appKey, md5Sign, sign);
             // 签名校验失败
             return BaseErrorCode.APP_AUTH_FAILURE;
         }
 
         int timestampCheck = DateUtils.getSecondsToNow(timestamp);
         if (timestampCheck < 0 || timestampCheck > TIMSTAMP_ERROR_SECONDS) {
-            log.warn("timestamp error ! appKey:{}, timstamp:{}, timestampCheck:{}", appKey, timestamp,
+            log.warn("timestamp error! appKey:{}, timstamp:{}, timestampCheck:{}", appKey, timestamp,
                     timestampCheck);
             return BaseErrorCode.TIMESTAMP_ERROR;
         }

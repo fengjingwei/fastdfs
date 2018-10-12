@@ -51,7 +51,7 @@ public class DFSController extends BaseController {
         try {
             fileInfoId = fileInfoService.addFileInfo(appKey, FileInfoEntity.FILE_ACCESS_TYPE_NO_AUTH, fileName, fileLength);
         } catch (Exception e) {
-            log.error("add file info error !", e);
+            log.error("add file info error!", e);
         }
         if (fileInfoId > 0) {
             String body = "{\"fileInfoId\":" + fileInfoId + "}";
@@ -94,8 +94,7 @@ public class DFSController extends BaseController {
     public String server(@RequestParam("appKey") String appKey) {
         String trackerServers = HttpClient.getInstance().getTrackersConfig();
         AppInfoEntity app = appInfoService.getAppInfo(appKey);
-        String groupName;
-        String body;
+        String groupName, body;
         if (app != null) {
             groupName = app.getGroupName();
             body = "{\"trackerServers\":\"" + trackerServers + "\",\"groupName\":\"" + groupName + "\"}";
@@ -140,16 +139,13 @@ public class DFSController extends BaseController {
             }
             // 各浏览器基本都支持ISO编码
             fileName = new String(bytes, CharEncoding.ISO_8859_1);
-            BaseErrorCode eCode = HttpClient.getInstance().httpDownloadFile(fileId, response, direct, fileName,
-                    fileExtName);
+            BaseErrorCode eCode = HttpClient.getInstance().httpDownloadFile(fileId, response, direct, fileName, fileExtName);
             if (eCode != BaseErrorCode.OK) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
         } catch (Exception e) {
             log.error("download file error! fileId:" + fileId, e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        } finally {
-
         }
     }
 

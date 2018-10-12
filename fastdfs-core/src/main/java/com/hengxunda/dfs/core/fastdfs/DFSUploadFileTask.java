@@ -69,7 +69,7 @@ public class DFSUploadFileTask implements Runnable {
                 fileInfoService.updateFileInfoById(fileInfo);
             }
         } else {
-            log.error("dfs_file_info id is null ,can't upload file !");
+            log.error("dfs_file_info id is null, can't upload file!");
         }
     }
 

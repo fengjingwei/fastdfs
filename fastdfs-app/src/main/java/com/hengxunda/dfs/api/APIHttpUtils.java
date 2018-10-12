@@ -62,18 +62,7 @@ public abstract class APIHttpUtils {
         } catch (Exception e) {
             throw new MyException(e.getMessage());
         } finally {
-            if (response != null) {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                }
-            }
-            if (httpClient != null) {
-                try {
-                    httpClient.close();
-                } catch (IOException e) {
-                }
-            }
+            close(response, httpClient);
         }
         return data;
     }
@@ -117,18 +106,7 @@ public abstract class APIHttpUtils {
         } catch (Exception e) {
             throw new MyException(e.getMessage());
         } finally {
-            if (response != null) {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                }
-            }
-            if (httpClient != null) {
-                try {
-                    httpClient.close();
-                } catch (IOException e) {
-                }
-            }
+            close(response, httpClient);
         }
 
         return fileInfoId;
@@ -162,18 +140,7 @@ public abstract class APIHttpUtils {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (response != null) {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                }
-            }
-            if (httpClient != null) {
-                try {
-                    httpClient.close();
-                } catch (IOException e) {
-                }
-            }
+            close(response, httpClient);
         }
     }
 
@@ -202,17 +169,21 @@ public abstract class APIHttpUtils {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (response != null) {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                }
+            close(response, httpClient);
+        }
+    }
+
+    private static void close(CloseableHttpResponse response, CloseableHttpClient httpClient) {
+        if (response != null) {
+            try {
+                response.close();
+            } catch (IOException e) {
             }
-            if (httpClient != null) {
-                try {
-                    httpClient.close();
-                } catch (IOException e) {
-                }
+        }
+        if (httpClient != null) {
+            try {
+                httpClient.close();
+            } catch (IOException e) {
             }
         }
     }

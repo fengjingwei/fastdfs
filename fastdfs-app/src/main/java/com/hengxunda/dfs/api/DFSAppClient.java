@@ -106,13 +106,13 @@ public class DFSAppClient {
             ServerData serverData = APIHttpUtils.getServerInfo(GET_SERVER_URL, clientAppKey);
             clientGroupName = serverData.getBody().getGroupName();
             if (StringUtils.isEmpty(clientAppKey) || StringUtils.isEmpty(clientGroupName)) {
-                throw new MyException("init server error, can't get appKey or groupName from http server !");
+                throw new MyException("init server error, can't get appKey or groupName from http server!");
             }
             Properties props = new Properties();
             props.setProperty(ClientGlobal.PROP_KEY_TRACKER_SERVERS, serverData.getBody().getTrackerServers());
             ClientGlobal.initByProperties(props);
         } catch (Exception e) {
-            throw new MyException("init server error ! , " + e.getMessage());
+            throw new MyException("init server error, " + e.getMessage());
         }
         trackerClient = new TrackerClient();
     }
@@ -135,7 +135,6 @@ public class DFSAppClient {
      * @throws MyException
      */
     private StorageClient1 assignResourseByFileId(String fileId) throws MyException {
-
         StorageClient1 client = new StorageClient1();
         try {
             if (client.getTrackerServer() == null
@@ -167,7 +166,7 @@ public class DFSAppClient {
             return client;
 
         } catch (Exception e) {
-            throw new MyException("connect to server error !");
+            throw new MyException("connect to server error!");
         }
     }
 
@@ -180,7 +179,7 @@ public class DFSAppClient {
      */
     private StorageClient1 assignResourseByGroupName(String groupName) throws MyException {
         if (groupName == null || groupName.trim().length() == 0) {
-            throw new MyException("can't get connect ,because groupName is null !");
+            throw new MyException("can't get connect, because groupName is null!");
         }
         StorageClient1 client = new StorageClient1();
         try {
@@ -203,7 +202,7 @@ public class DFSAppClient {
             }
             return client;
         } catch (Exception e) {
-            throw new MyException("connect to server error !");
+            throw new MyException("connect to server error!");
         }
     }
 
@@ -304,7 +303,7 @@ public class DFSAppClient {
     private String uploadFile(InputStream in, String groupName, String extName, NameValuePair[] metaList,
                               Integer fileInfoId) throws MyException {
         if (in == null) {
-            throw new MyException("inputstream is null !");
+            throw new MyException("inputstream is null!");
         }
         StorageClient1 client = null;
         String fileId = null;
@@ -424,7 +423,7 @@ public class DFSAppClient {
         } catch (MyException e) {
             throw new MyException(e.getMessage());
         } catch (Exception e) {
-            throw new MyException("download file error ! , " + e.getMessage());
+            throw new MyException("download file error, " + e.getMessage());
         } finally {
             releaseResourse(client);
             if (isClose) {

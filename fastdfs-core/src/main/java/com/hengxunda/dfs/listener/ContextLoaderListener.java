@@ -19,12 +19,12 @@ public class ContextLoaderListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         appInfoService.loadAppInfoToCache();
         if (log.isDebugEnabled()) {
-            log.debug("all appInfo loaded to cache !");
+            log.debug("all appInfo loaded to cache!");
         }
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        log.debug("contexted stopped !");
+        log.debug("contexted stopped!");
     }
 }
