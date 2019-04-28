@@ -23,8 +23,7 @@ public abstract class MD5Utils {
             int j = md.length;
             char[] str = new char[j * 2];
             int k = 0;
-            for (int i = 0; i < j; i++) {
-                byte byte0 = md[i];
+            for (byte byte0 : md) {
                 str[k++] = HEX_DIGITS[byte0 >>> 4 & 0xf];
                 str[k++] = HEX_DIGITS[byte0 & 0xf];
             }
@@ -38,9 +37,7 @@ public abstract class MD5Utils {
     }
 
     public static void main(String[] args) {
-
         String pass = "123456";
         System.out.println(MD5Utils.md5(pass));
     }
-
 }

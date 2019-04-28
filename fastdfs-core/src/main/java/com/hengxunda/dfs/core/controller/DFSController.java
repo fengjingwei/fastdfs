@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -109,12 +110,12 @@ public class DFSController extends BaseController {
      *
      * @param fileId   fastdfs返回的fileId
      * @param direct   是否直接显示，true表示可以直接显示，false表示可以下载保存成文件(默认)
+     * @param request
      * @param response
      * @throws IOException
      */
     @RequestMapping(value = "/v1/download", method = RequestMethod.GET)
-    public void downloadFile(@RequestParam("fileId") String fileId, boolean direct, HttpServletResponse request,
-                             HttpServletResponse response) throws IOException {
+    public void downloadFile(@RequestParam("fileId") String fileId, boolean direct, HttpServletResponse request, HttpServletResponse response) throws IOException {
         try {
             response.setCharacterEncoding(CharEncoding.UTF_8);
             // 注意区分大小写
@@ -133,12 +134,12 @@ public class DFSController extends BaseController {
             String userAgent = request.getHeader("User-Agent");
             byte[] bytes;
             if (userAgent != null) {
-                bytes = userAgent.contains("MSIE") ? fileName.getBytes() : fileName.getBytes(CharEncoding.UTF_8);
+                bytes = userAgent.contains("MSIE") ? fileName.getBytes() : fileName.getBytes(StandardCharsets.UTF_8);
             } else {
                 bytes = fileName.getBytes();
             }
             // 各浏览器基本都支持ISO编码
-            fileName = new String(bytes, CharEncoding.ISO_8859_1);
+            fileName = new String(bytes, StandardCharsets.ISO_8859_1);
             BaseErrorCode eCode = HttpClient.getInstance().httpDownloadFile(fileId, response, direct, fileName, fileExtName);
             if (eCode != BaseErrorCode.OK) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);

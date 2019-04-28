@@ -32,9 +32,8 @@ public class FileInfoService {
         fileInfo.setAccessType(accessType);
         fileInfo.setBelongsApp(appKey);
         fileInfo.setStatus(FileInfoEntity.FILE_STATUS_CREATED);
-        Date now = new Date();
-        fileInfo.setCreateDate(now);
-        fileInfo.setUpdateDate(now);
+        fileInfo.setCreateDate(new Date());
+        fileInfo.setUpdateDate(fileInfo.getCreateDate());
         fileInfoMapper.addFileInfo(fileInfo);
         return fileInfo.getId();
     }

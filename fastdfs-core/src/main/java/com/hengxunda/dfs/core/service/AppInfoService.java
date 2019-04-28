@@ -26,7 +26,7 @@ public class AppInfoService {
     /**
      * 客户端的发送请求时间与服务器的时间相差超过多少秒是无效的
      */
-    private static final int TIMSTAMP_ERROR_SECONDS = 2 * 60 * 60;
+    private static final int TIMESTAMP_ERROR_SECONDS = 2 * 60 * 60;
 
     /**
      * 将应用信息载入缓存
@@ -34,10 +34,10 @@ public class AppInfoService {
      * @return
      */
     public void loadAppInfoToCache() {
-        List<AppInfoEntity> appInfos = appInfoMapper.getAllAppInfo();
-        if (appInfos != null && !appInfos.isEmpty()) {
-            for (AppInfoEntity app : appInfos) {
-                CacheService.APP_INFO_CACHE.put(app.getAppKey(), app);
+        List<AppInfoEntity> appInfoEntityList = appInfoMapper.getAllAppInfo();
+        if (appInfoEntityList != null && !appInfoEntityList.isEmpty()) {
+            for (AppInfoEntity appInfoEntity : appInfoEntityList) {
+                CacheService.APP_INFO_CACHE.put(appInfoEntity.getAppKey(), appInfoEntity);
             }
         } else {
             CacheService.APP_INFO_CACHE.clear();
@@ -81,8 +81,8 @@ public class AppInfoService {
             return BaseErrorCode.APP_NOT_EXIST;
         }
 
-        if (app.getStatus() == null || app.getStatus().intValue() != AppInfoEntity.APP_STATUS_OK) {
-            log.warn("app stopped ! appKey:{}", appKey);
+        if (app.getStatus() == null || app.getStatus() != AppInfoEntity.APP_STATUS_OK) {
+            log.warn("app stopped! appKey:{}", appKey);
             // 应用已停用
             return BaseErrorCode.APP_STOPPED;
         }
@@ -97,8 +97,8 @@ public class AppInfoService {
         }
 
         int timestampCheck = DateUtils.getSecondsToNow(timestamp);
-        if (timestampCheck < 0 || timestampCheck > TIMSTAMP_ERROR_SECONDS) {
-            log.warn("timestamp error! appKey:{}, timstamp:{}, timestampCheck:{}", appKey, timestamp,
+        if (timestampCheck < 0 || timestampCheck > TIMESTAMP_ERROR_SECONDS) {
+            log.warn("timestamp error! appKey:{}, timestamp:{}, timestampCheck:{}", appKey, timestamp,
                     timestampCheck);
             return BaseErrorCode.TIMESTAMP_ERROR;
         }

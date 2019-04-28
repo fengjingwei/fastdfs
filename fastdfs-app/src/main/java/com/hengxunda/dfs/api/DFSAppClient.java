@@ -123,7 +123,7 @@ public class DFSAppClient {
      * @return
      * @throws MyException
      */
-    private StorageClient1 assignResourse() throws MyException {
+    private StorageClient1 assignResource() throws MyException {
         return assignResourseByFileId(null);
     }
 
@@ -157,7 +157,7 @@ public class DFSAppClient {
                     storageServer = trackerClient.getStoreStorage(client.getTrackerServer(), null);
                 }
                 if (storageServer == null) {
-                    releaseResourse(client);
+                    releaseResource(client);
                     throw new MyException("can't get stroageServer!");
                 }
                 client.setStorageServer(storageServer);
@@ -177,7 +177,7 @@ public class DFSAppClient {
      * @return
      * @throws MyException
      */
-    private StorageClient1 assignResourseByGroupName(String groupName) throws MyException {
+    private StorageClient1 assignResourceByGroupName(String groupName) throws MyException {
         if (groupName == null || groupName.trim().length() == 0) {
             throw new MyException("can't get connect, because groupName is null!");
         }
@@ -195,7 +195,7 @@ public class DFSAppClient {
                     || (client.getStorageServer() != null && client.getStorageServer().getSocket().isClosed())) {
                 StorageServer storageServer = trackerClient.getStoreStorage(client.getTrackerServer(), groupName);
                 if (storageServer == null) {
-                    releaseResourse(client);
+                    releaseResource(client);
                     throw new MyException("can't get stroageServer!");
                 }
                 client.setStorageServer(storageServer);
@@ -209,7 +209,7 @@ public class DFSAppClient {
     /**
      * 释放服务端的链接
      */
-    private void releaseResourse(StorageClient1 client) {
+    private void releaseResource(StorageClient1 client) {
         try {
             if (client != null) {
                 if (client.getStorageServer() != null) {
@@ -224,7 +224,7 @@ public class DFSAppClient {
                 client.setStorageServer(null);
             }
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
     }
@@ -300,10 +300,9 @@ public class DFSAppClient {
      * @return 返回fileId
      * @throws MyException
      */
-    private String uploadFile(InputStream in, String groupName, String extName, NameValuePair[] metaList,
-                              Integer fileInfoId) throws MyException {
+    private String uploadFile(InputStream in, String groupName, String extName, NameValuePair[] metaList, Integer fileInfoId) throws MyException {
         if (in == null) {
-            throw new MyException("inputstream is null!");
+            throw new MyException("inputStream is null!");
         }
         StorageClient1 client = null;
         String fileId = null;
@@ -314,9 +313,9 @@ public class DFSAppClient {
                 isSetGroup = true;
             }
             if (isSetGroup) {
-                client = assignResourseByGroupName(groupName);
+                client = assignResourceByGroupName(groupName);
             } else {
-                client = assignResourse();
+                client = assignResource();
             }
             long length = in.available();
             // 超过指定大小就进行分批上传
@@ -355,14 +354,14 @@ public class DFSAppClient {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            releaseResourse(client);
+            releaseResource(client);
         }
 
         try {
             if (StringUtils.isNotEmpty(fileId) && fileInfoId != null && fileInfoId > 0) {
                 executorService.execute(new EndUpLoadHttpTask(END_UPLOAD_URL, fileId, fileInfoId));
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return fileId;
     }
@@ -403,7 +402,7 @@ public class DFSAppClient {
                 }
             }
             if (fileLength < 0) {
-                throw new MyException("Unkonw file info! fileId:" + fileId);
+                throw new MyException("Unknown file info! fileId:" + fileId);
             }
             if (!(out instanceof BufferedOutputStream)) {
                 out = new BufferedOutputStream(out);
@@ -425,7 +424,7 @@ public class DFSAppClient {
         } catch (Exception e) {
             throw new MyException("download file error, " + e.getMessage());
         } finally {
-            releaseResourse(client);
+            releaseResource(client);
             if (isClose) {
                 try {
                     out.close();
@@ -441,7 +440,6 @@ public class DFSAppClient {
      *
      * @param fileId
      * @return 0 成功,2文件不存在,其他值失败
-     * @throws IOException
      * @throws MyException
      */
     public int deleteFile(String fileId) throws MyException {
@@ -456,13 +454,13 @@ public class DFSAppClient {
         } catch (Exception e) {
             result = -1;
         } finally {
-            releaseResourse(client);
+            releaseResource(client);
         }
 
         if (result == 0) {
             try {
                 executorService.execute(new DeleteHttpTask(DELETE_URL, fileId));
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         return result;
@@ -481,7 +479,9 @@ public class DFSAppClient {
     class EndUpLoadHttpTask implements Runnable {
 
         private String url;
+
         private String fileId;
+
         private Integer fileInfoId;
 
         @Override
@@ -494,6 +494,7 @@ public class DFSAppClient {
     class DeleteHttpTask implements Runnable {
 
         private String url;
+
         private String fileId;
 
         @Override

@@ -2,7 +2,7 @@ package com.hengxunda.dfs.utils;
 
 public abstract class DateUtils {
 
-    public static final int MILLIS_IN_SECOND = 1000;
+    private static final int MILLIS_IN_SECOND = 1000;
 
     /**
      * 获取指时间戳到与当前时间间隔秒数
@@ -19,7 +19,7 @@ public abstract class DateUtils {
         long fromMillis = -1;
         try {
             fromMillis = Long.valueOf(strfromMillis);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         if (fromMillis < 0) {
             return -1;

@@ -135,8 +135,7 @@ public abstract class APIHttpUtils {
             // 通过请求对象获取响应对象
             response = httpClient.execute(request);
             // 判断网络连接状态码是否正常
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-            }
+            response.getStatusLine().getStatusCode();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -164,8 +163,7 @@ public abstract class APIHttpUtils {
             // 通过请求对象获取响应对象
             response = httpClient.execute(request);
             // 判断网络连接状态码是否正常
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-            }
+            response.getStatusLine().getStatusCode();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -177,13 +175,13 @@ public abstract class APIHttpUtils {
         if (response != null) {
             try {
                 response.close();
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
         }
         if (httpClient != null) {
             try {
                 httpClient.close();
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
         }
     }

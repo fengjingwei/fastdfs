@@ -156,7 +156,7 @@ public class HttpClient {
                 client.setStorageServer(null);
             }
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
     }
@@ -302,18 +302,15 @@ public class HttpClient {
      * @param fileName    下载后的文件名
      * @param fileExtName 文件扩展名
      * @throws MyException
-     * @throws IOException
      */
     public BaseErrorCode httpDownloadFile(String fileId, HttpServletResponse response, boolean direct, String fileName,
                                           String fileExtName) throws MyException {
         StorageClient1 client = assignResourse(fileId);
         long fileLength = -1L;
         try {
-            if (fileLength < 0) {
-                FileInfo fileInfo = client.get_file_info1(fileId);
-                if (fileInfo != null) {
-                    fileLength = fileInfo.getFileSize();
-                }
+            FileInfo fileInfo = client.get_file_info1(fileId);
+            if (fileInfo != null) {
+                fileLength = fileInfo.getFileSize();
             }
             if (fileLength < 0) {
                 return BaseErrorCode.RESOURCE_NOT_FOUND;
@@ -360,8 +357,6 @@ public class HttpClient {
      *
      * @param fileId
      * @return 0成功, 2文件不存在, 其他值失败
-     * @throws IOException
-     * @throws MyException
      */
     public int deleteFile(String fileId) {
         StorageClient1 client = null;

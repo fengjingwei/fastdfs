@@ -7,7 +7,6 @@ public abstract class GsonUtils {
     private static final Gson GSON = new Gson();
 
     public static <T> T parseObject(String jsonData, Class<T> type) {
-        T result = GSON.fromJson(jsonData, type);
-        return result;
+        return GSON.fromJson(jsonData, type);
     }
 }

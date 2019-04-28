@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 public class AuthControllerInterceptor extends BaseController implements HandlerInterceptor {
@@ -28,14 +29,14 @@ public class AuthControllerInterceptor extends BaseController implements Handler
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         if (StringUtils.isEmpty(appKey) || StringUtils.isEmpty(timestamp) || StringUtils.isEmpty(sign)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getOutputStream().write(getResponseByCode(BaseErrorCode.AUTH_PARAM_ERROR).getBytes(CharEncoding.UTF_8));
+            response.getOutputStream().write(getResponseByCode(BaseErrorCode.AUTH_PARAM_ERROR).getBytes(StandardCharsets.UTF_8));
             response.getOutputStream().flush();
             return false;
         }
         BaseErrorCode eCode = appInfoService.checkAuth(appKey, timestamp, sign);
         if (eCode != BaseErrorCode.OK) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getOutputStream().write(getResponseByCode(eCode).getBytes(CharEncoding.UTF_8));
+            response.getOutputStream().write(getResponseByCode(eCode).getBytes(StandardCharsets.UTF_8));
             response.getOutputStream().flush();
             return false;
         }

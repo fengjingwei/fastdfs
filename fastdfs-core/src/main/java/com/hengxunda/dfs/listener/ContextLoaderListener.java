@@ -25,6 +25,6 @@ public class ContextLoaderListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        log.debug("contexted stopped!");
+        log.debug("context stopped!");
     }
 }
