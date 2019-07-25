@@ -15,32 +15,27 @@ import java.util.concurrent.*;
 
 public class DFSAppClient {
 
-    /**
-     * 上传缓存
-     */
-    private static int UPLOAD_BUFFER_SIZE = 1024 * 1024;
-
-    /**
-     * 下载缓存
-     */
-    private static int DOWNLOAD_BUFFER_SIZE = 1024 * 1024;
-
-    /**
-     * 需要分批上传的大小
-     */
-    private static int NEED_BATCH_UPLOAD_SIZE = UPLOAD_BUFFER_SIZE;
-
-    /**
-     * 线程池大小
-     */
-    private static int CORE_THREAD_SIZE = 5;
-
     private static final String V1_SERVER = "dfs/v1/server";
     private static final String V1_SUPLOAD = "dfs/v1/sUpload";
     private static final String V1_EUPLOAD = "dfs/v1/eUpload";
     private static final String V1_DELETE = "dfs/v1/delete";
     private static final String V1_DOWNLOAD = "dfs/v1/download";
-
+    /**
+     * 上传缓存
+     */
+    private static int UPLOAD_BUFFER_SIZE = 1024 * 1024;
+    /**
+     * 下载缓存
+     */
+    private static int DOWNLOAD_BUFFER_SIZE = 1024 * 1024;
+    /**
+     * 需要分批上传的大小
+     */
+    private static int NEED_BATCH_UPLOAD_SIZE = UPLOAD_BUFFER_SIZE;
+    /**
+     * 线程池大小
+     */
+    private static int CORE_THREAD_SIZE = 5;
     private static String GET_SERVER_URL = null;
     private static String START_UPLOAD_URL = null;
     private static String END_UPLOAD_URL = null;
@@ -158,7 +153,7 @@ public class DFSAppClient {
                 }
                 if (storageServer == null) {
                     releaseResource(client);
-                    throw new MyException("can't get stroageServer!");
+                    throw new MyException("can't get storageServer!");
                 }
                 client.setStorageServer(storageServer);
             }
@@ -196,7 +191,7 @@ public class DFSAppClient {
                 StorageServer storageServer = trackerClient.getStoreStorage(client.getTrackerServer(), groupName);
                 if (storageServer == null) {
                     releaseResource(client);
-                    throw new MyException("can't get stroageServer!");
+                    throw new MyException("can't get storageServer!");
                 }
                 client.setStorageServer(storageServer);
             }

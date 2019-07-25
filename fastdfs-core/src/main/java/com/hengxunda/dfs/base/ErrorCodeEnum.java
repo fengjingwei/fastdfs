@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum BaseErrorCode {
+public enum ErrorCodeEnum {
 
     OK(200, "正常"),
 
@@ -27,7 +27,8 @@ public enum BaseErrorCode {
 
     RESOURCE_NOT_FOUND(404, "资源找不到"),
 
-    SERVER_ERROR(500, "服务器内部错误"),;
+    SERVER_ERROR(500, "服务器内部错误"),
+    ;
 
     private final int code;
 

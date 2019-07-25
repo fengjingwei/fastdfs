@@ -5,9 +5,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-/**
- * API参数配置
- */
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor(staticName = "of")

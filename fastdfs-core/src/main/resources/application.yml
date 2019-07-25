@@ -12,7 +12,6 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: ${spring.servlet.multipart.max-file-size}
-
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://192.168.0.21:3306/fastdfs?characterEncoding=utf8&useSSL=false

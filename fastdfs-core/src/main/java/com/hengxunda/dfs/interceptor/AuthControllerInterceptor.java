@@ -1,11 +1,10 @@
 package com.hengxunda.dfs.interceptor;
 
 import com.hengxunda.dfs.base.BaseController;
-import com.hengxunda.dfs.base.BaseErrorCode;
-import com.hengxunda.dfs.base.spring.SpringContext;
+import com.hengxunda.dfs.base.ErrorCodeEnum;
+import com.hengxunda.dfs.base.spring.SpringContextHolder;
 import com.hengxunda.dfs.core.service.AppInfoService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.CharEncoding;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -18,23 +17,22 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class AuthControllerInterceptor extends BaseController implements HandlerInterceptor {
 
-    private AppInfoService appInfoService = SpringContext.getBean(AppInfoService.class);
+    private AppInfoService appInfoService = SpringContextHolder.getBean(AppInfoService.class);
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String appKey = request.getHeader(HEADER_APP_KEY);
         String timestamp = request.getHeader(HEADER_TIMESTAMP);
         String sign = request.getHeader(HEADER_SIGN);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         if (StringUtils.isEmpty(appKey) || StringUtils.isEmpty(timestamp) || StringUtils.isEmpty(sign)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getOutputStream().write(getResponseByCode(BaseErrorCode.AUTH_PARAM_ERROR).getBytes(StandardCharsets.UTF_8));
+            response.getOutputStream().write(getResponseByCode(ErrorCodeEnum.AUTH_PARAM_ERROR).getBytes(StandardCharsets.UTF_8));
             response.getOutputStream().flush();
             return false;
         }
-        BaseErrorCode eCode = appInfoService.checkAuth(appKey, timestamp, sign);
-        if (eCode != BaseErrorCode.OK) {
+        ErrorCodeEnum eCode = appInfoService.checkAuth(appKey, timestamp, sign);
+        if (eCode != ErrorCodeEnum.OK) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getOutputStream().write(getResponseByCode(eCode).getBytes(StandardCharsets.UTF_8));
             response.getOutputStream().flush();

@@ -26,7 +26,8 @@ public abstract class APIHttpUtils {
      */
     private static final RequestConfig REQUEST_CONFIG = RequestConfig.custom()
             .setSocketTimeout(30000)
-            .setConnectTimeout(30000).build();
+            .setConnectTimeout(30000)
+            .build();
 
     /**
      * 获取ServerData

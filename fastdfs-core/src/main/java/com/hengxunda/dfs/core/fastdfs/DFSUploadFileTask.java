@@ -1,6 +1,6 @@
 package com.hengxunda.dfs.core.fastdfs;
 
-import com.hengxunda.dfs.base.spring.SpringContext;
+import com.hengxunda.dfs.base.spring.SpringContextHolder;
 import com.hengxunda.dfs.core.entity.FileInfoEntity;
 import com.hengxunda.dfs.core.service.FileInfoService;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class DFSUploadFileTask implements Runnable {
 
-    private FileInfoService fileInfoService = SpringContext.getBean(FileInfoService.class);
+    private FileInfoService fileInfoService = SpringContextHolder.getBean(FileInfoService.class);
 
     /**
      * 对应dfs_file_info的id

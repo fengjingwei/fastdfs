@@ -361,6 +361,9 @@ public final class MimeUtils {
         applyOverrides();
     }
 
+    private MimeUtils() {
+    }
+
     private static void add(String mimeType, String extension) {
         //
         // if we have an existing x --> y mapping, we do not want to
@@ -430,9 +433,6 @@ public final class MimeUtils {
             }
         } catch (IOException ignored) {
         }
-    }
-
-    private MimeUtils() {
     }
 
     /**

@@ -18,14 +18,14 @@ public abstract class BaseController {
     public final String HEADER_SIGN = "dfs-request-sign";
 
     public String getResponseOK() {
-        return "{\"result\":" + BaseErrorCode.OK.getCode() + "}";
+        return "{\"result\":" + ErrorCodeEnum.OK.getCode() + "}";
     }
 
-    public String getResponseByCode(BaseErrorCode code) {
+    public String getResponseByCode(ErrorCodeEnum code) {
         return "{\"result\":" + code.getCode() + ",\"msg\":\"" + code.getMessage() + "\"}";
     }
 
     public String getResponseOKWithBody(String body) {
-        return "{\"result\":" + BaseErrorCode.OK.getCode() + ",\"body\":" + body + "}";
+        return "{\"result\":" + ErrorCodeEnum.OK.getCode() + ",\"body\":" + body + "}";
     }
 }

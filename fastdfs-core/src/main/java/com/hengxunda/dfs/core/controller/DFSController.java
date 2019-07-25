@@ -1,7 +1,7 @@
 package com.hengxunda.dfs.core.controller;
 
 import com.hengxunda.dfs.base.BaseController;
-import com.hengxunda.dfs.base.BaseErrorCode;
+import com.hengxunda.dfs.base.ErrorCodeEnum;
 import com.hengxunda.dfs.core.entity.AppInfoEntity;
 import com.hengxunda.dfs.core.entity.FileInfoEntity;
 import com.hengxunda.dfs.core.fastdfs.HttpClient;
@@ -58,7 +58,7 @@ public class DFSController extends BaseController {
             String body = "{\"fileInfoId\":" + fileInfoId + "}";
             return getResponseOKWithBody(body);
         } else {
-            return getResponseByCode(BaseErrorCode.SERVER_ERROR);
+            return getResponseByCode(ErrorCodeEnum.SERVER_ERROR);
         }
     }
 
@@ -101,7 +101,7 @@ public class DFSController extends BaseController {
             body = "{\"trackerServers\":\"" + trackerServers + "\",\"groupName\":\"" + groupName + "\"}";
             return getResponseOKWithBody(body);
         } else {
-            return getResponseByCode(BaseErrorCode.APP_NOT_EXIST);
+            return getResponseByCode(ErrorCodeEnum.APP_NOT_EXIST);
         }
     }
 
@@ -140,8 +140,8 @@ public class DFSController extends BaseController {
             }
             // 各浏览器基本都支持ISO编码
             fileName = new String(bytes, StandardCharsets.ISO_8859_1);
-            BaseErrorCode eCode = HttpClient.getInstance().httpDownloadFile(fileId, response, direct, fileName, fileExtName);
-            if (eCode != BaseErrorCode.OK) {
+            ErrorCodeEnum eCode = HttpClient.getInstance().httpDownloadFile(fileId, response, direct, fileName, fileExtName);
+            if (eCode != ErrorCodeEnum.OK) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
         } catch (Exception e) {

@@ -1748,6 +1748,22 @@ public class StorageClient {
         this.storageServer.getSocket().getOutputStream().write(wholePkg);
     }
 
+    public TrackerServer getTrackerServer() {
+        return trackerServer;
+    }
+
+    public void setTrackerServer(TrackerServer trackerServer) {
+        this.trackerServer = trackerServer;
+    }
+
+    public StorageServer getStorageServer() {
+        return storageServer;
+    }
+
+    public void setStorageServer(StorageServer storageServer) {
+        this.storageServer = storageServer;
+    }
+
     /**
      * Upload file by file buff
      *
@@ -1783,22 +1799,6 @@ public class StorageClient {
 
             return 0;
         }
-    }
-
-    public TrackerServer getTrackerServer() {
-        return trackerServer;
-    }
-
-    public void setTrackerServer(TrackerServer trackerServer) {
-        this.trackerServer = trackerServer;
-    }
-
-    public StorageServer getStorageServer() {
-        return storageServer;
-    }
-
-    public void setStorageServer(StorageServer storageServer) {
-        this.storageServer = storageServer;
     }
 
 

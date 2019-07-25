@@ -1,7 +1,7 @@
 package com.hengxunda.dfs.core.controller;
 
 import com.hengxunda.dfs.base.BaseController;
-import com.hengxunda.dfs.base.BaseErrorCode;
+import com.hengxunda.dfs.base.ErrorCodeEnum;
 import com.hengxunda.dfs.base.cache.CacheService;
 import com.hengxunda.dfs.core.entity.AppInfoEntity;
 import com.hengxunda.dfs.core.entity.FileInfoEntity;
@@ -39,13 +39,13 @@ public class DFSAuthController extends BaseController {
             HttpClient.getInstance().executeUploadTask(fileInfoId, bis, appInfo.getGroupName(), FilenameUtils.getExtension(fileName));
         } catch (Exception e) {
             log.error("upload file error!", e);
-            return getResponseByCode(BaseErrorCode.SERVER_ERROR);
+            return getResponseByCode(ErrorCodeEnum.SERVER_ERROR);
         }
         if (fileInfoId > 0) {
             String body = "{\"id\":" + fileInfoId + "}";
             return getResponseOKWithBody(body);
         } else {
-            return getResponseByCode(BaseErrorCode.SERVER_ERROR);
+            return getResponseByCode(ErrorCodeEnum.SERVER_ERROR);
         }
     }
 

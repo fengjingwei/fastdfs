@@ -1,8 +1,8 @@
 package com.hengxunda.dfs.core.fastdfs;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.hengxunda.dfs.base.BaseErrorCode;
-import com.hengxunda.dfs.base.spring.SpringContext;
+import com.hengxunda.dfs.base.ErrorCodeEnum;
+import com.hengxunda.dfs.base.spring.SpringContextHolder;
 import com.hengxunda.dfs.listener.InitializeConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -19,25 +19,20 @@ import java.util.concurrent.*;
 @Slf4j
 public class HttpClient {
 
-    private InitializeConfig config = SpringContext.getBean(InitializeConfig.class);
-
     /**
      * 大于1M分批上传
      */
     private static final int NEED_BATCH_UPLOAD_SIZE = 1024 * 1024;
-
     /**
      * 上传缓存
      */
     private static final int UPLOAD_BUFFER_SIZE = 1024 * 1024;
-
     /**
      * 下载缓存，这里只有http下载，所有将缓存设小，所以也不适应大于10M的文件下载
      */
     private static final int DOWNLOAD_BUFFER_SIZE = 128 * 1024;
-
     private static HttpClient instance = new HttpClient();
-
+    private InitializeConfig config = SpringContextHolder.getBean(InitializeConfig.class);
     private int uploadThreadSize = config.getUpload();
 
     private TrackerClient trackerClient;
@@ -50,10 +45,6 @@ public class HttpClient {
      * 处理上传任务的线程池
      */
     private ExecutorService uploadExecutorService = new ThreadPoolExecutor(uploadThreadSize, uploadThreadSize, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
-
-    public static HttpClient getInstance() {
-        return instance;
-    }
 
     private HttpClient() {
         try {
@@ -68,6 +59,10 @@ public class HttpClient {
             System.exit(1);
         }
         trackerClient = new TrackerClient();
+    }
+
+    public static HttpClient getInstance() {
+        return instance;
     }
 
     public String getTrackersConfig() {
@@ -124,7 +119,7 @@ public class HttpClient {
                 }
                 if (storageServer == null) {
                     releaseResourse(client);
-                    throw new MyException("can't get stroageServer!");
+                    throw new MyException("can't get storageServer!");
                 }
                 client.setStorageServer(storageServer);
             }
@@ -143,19 +138,15 @@ public class HttpClient {
         try {
             if (client != null) {
                 log.debug("release ：client-> " + client + ",storageServer-> " + client.getStorageServer() + ",trackerServer-> " + client.getTrackerServer());
-
                 if (client.getStorageServer() != null) {
                     client.getStorageServer().close();
                 }
-
                 if (client.getTrackerServer() != null) {
                     client.getTrackerServer().close();
                 }
-
                 client.setTrackerServer(null);
                 client.setStorageServer(null);
             }
-
         } catch (Exception ignored) {
 
         }
@@ -196,8 +187,7 @@ public class HttpClient {
      * @throws FileNotFoundException
      * @throws MyException
      */
-    public String uploadFile(File file, String groupName, NameValuePair[] metaList)
-            throws FileNotFoundException, MyException {
+    public String uploadFile(File file, String groupName, NameValuePair[] metaList) throws FileNotFoundException, MyException {
         String fileName = file.getName();
         String extName = FilenameUtils.getExtension(fileName);
         return uploadFile(new FileInputStream(file), groupName, extName, metaList);
@@ -225,10 +215,9 @@ public class HttpClient {
      * @return 返回fileId
      * @throws MyException
      */
-    public String uploadFile(InputStream in, String groupName, String extName, NameValuePair[] metaList)
-            throws MyException {
+    public String uploadFile(InputStream in, String groupName, String extName, NameValuePair[] metaList) throws MyException {
         if (in == null) {
-            throw new MyException("inputstream is null!");
+            throw new MyException("inputStream is null!");
         }
         StorageClient1 client = assignResourse();
         String fileId = null;
@@ -289,7 +278,6 @@ public class HttpClient {
                 e.printStackTrace();
             }
         }
-
         return fileId;
     }
 
@@ -303,8 +291,7 @@ public class HttpClient {
      * @param fileExtName 文件扩展名
      * @throws MyException
      */
-    public BaseErrorCode httpDownloadFile(String fileId, HttpServletResponse response, boolean direct, String fileName,
-                                          String fileExtName) throws MyException {
+    public ErrorCodeEnum httpDownloadFile(String fileId, HttpServletResponse response, boolean direct, String fileName, String fileExtName) throws MyException {
         StorageClient1 client = assignResourse(fileId);
         long fileLength = -1L;
         try {
@@ -313,7 +300,7 @@ public class HttpClient {
                 fileLength = fileInfo.getFileSize();
             }
             if (fileLength < 0) {
-                return BaseErrorCode.RESOURCE_NOT_FOUND;
+                return ErrorCodeEnum.RESOURCE_NOT_FOUND;
             } else {
                 response.setContentLengthLong(fileLength);
                 if (!direct) {
@@ -322,7 +309,7 @@ public class HttpClient {
             }
             int bufferSize = DOWNLOAD_BUFFER_SIZE;
             if (fileLength > 10 * 1024 * 1024) {
-                // 文件大于10M 将缓存设为1M
+                // 文件大于10M将缓存设为1M
                 bufferSize = 1024 * 1024;
             }
             BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream(), bufferSize);
@@ -349,7 +336,7 @@ public class HttpClient {
         } finally {
             releaseResourse(client);
         }
-        return BaseErrorCode.OK;
+        return ErrorCodeEnum.OK;
     }
 
     /**

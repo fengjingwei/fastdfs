@@ -7,6 +7,7 @@ import org.apache.http.HttpStatus;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 public class FastdfsCoreApplicationTests {
@@ -22,7 +23,6 @@ public class FastdfsCoreApplicationTests {
     static String newLine = "\r\n";
 
     public static void testUpload() {
-
         BufferedInputStream in = null;
         BufferedOutputStream out = null;
         BufferedReader reader = null;
@@ -35,7 +35,7 @@ public class FastdfsCoreApplicationTests {
             // 服务器的域名
             URL url = new URL("http://localhost:8808/dfs/auth/v1/upload/self");
             connection = (HttpURLConnection) url.openConnection();
-            // 设置为POST情
+            // 设置为POST请求
             connection.setRequestMethod("POST");
             // 发送POST请求必须设置如下两行
             connection.setDoOutput(true);
@@ -70,35 +70,33 @@ public class FastdfsCoreApplicationTests {
             sb.append(newLine);
 
             // 将参数头的数据写入到输出流中
-            out.write(sb.toString().getBytes("UTF-8"));
+            out.write(sb.toString().getBytes(StandardCharsets.UTF_8));
             out.flush();
 
             // 数据输入流,用于读取文件数据
             in = new BufferedInputStream(fis);
-            byte[] bufferOut = new byte[1 * 1024 * 1024];
-            int bytes = 0;
+            byte[] bufferOut = new byte[1024 * 1024];
+            int bytes;
             // 每次读1MB数据,并且将文件数据写入到输出流中
             while ((bytes = in.read(bufferOut)) > 0) {
                 out.write(bufferOut, 0, bytes);
                 out.flush();
             }
             // 最后添加换行
-            out.write(newLine.getBytes("UTF-8"));
-            // 定义最后数据分隔线，即--加上BOUNDARY再加上--。
-            byte[] end_data = (boundaryPrefix + BOUNDARY + boundaryPrefix + newLine).getBytes("UTF-8");
+            out.write(newLine.getBytes(StandardCharsets.UTF_8));
+            // 定义最后数据分隔线，即--加上BOUNDARY再加上--
+            byte[] end_data = (boundaryPrefix + BOUNDARY + boundaryPrefix + newLine).getBytes(StandardCharsets.UTF_8);
             // 写上结尾标识
             out.write(end_data);
             out.flush();
             int status = connection.getResponseCode();
-            if (status == HttpStatus.SC_OK) { // 不等于 200个表示异常
+            if (status == HttpStatus.SC_OK) { // 不等于200表示异常
                 // 定义BufferedReader输入流来读取URL的响应
                 reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line = null;
+                String line;
                 while ((line = reader.readLine()) != null) {
                     System.out.println(line);
                 }
-            } else {
-
             }
         } catch (Exception e) {
             System.out.println("发送POST请求出现异常！" + e);
@@ -112,14 +110,12 @@ public class FastdfsCoreApplicationTests {
     }
 
     private static String appendSeq(String appKey, String appSecret, String timestamp) {
-        StringBuilder seq = new StringBuilder(256);
-        seq.append(appKey);
-        seq.append("$");
-        seq.append(appSecret);
-        seq.append("$");
-        seq.append(timestamp);
-
-        return seq.toString();
+        String seq = appKey +
+                "$" +
+                appSecret +
+                "$" +
+                timestamp;
+        return seq;
     }
 
     public static void main(String[] args) {

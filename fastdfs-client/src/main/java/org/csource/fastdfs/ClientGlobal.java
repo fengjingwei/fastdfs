@@ -49,16 +49,13 @@ public class ClientGlobal {
     public static final boolean DEFAULT_HTTP_ANTI_STEAL_TOKEN = false;
     public static final String DEFAULT_HTTP_SECRET_KEY = "FastDFS1234567890";
     public static final int DEFAULT_HTTP_TRACKER_HTTP_PORT = 80;
-
+    public static final int DEFAULT_SECTION_SIZE = 1024; //kb
     public static int g_connect_timeout = DEFAULT_CONNECT_TIMEOUT * 1000; //millisecond
     public static int g_network_timeout = DEFAULT_NETWORK_TIMEOUT * 1000; //millisecond
     public static String g_charset = DEFAULT_CHARSET;
     public static boolean g_anti_steal_token = DEFAULT_HTTP_ANTI_STEAL_TOKEN; //if anti-steal token
     public static String g_secret_key = DEFAULT_HTTP_SECRET_KEY; //generage token secret key
     public static int g_tracker_http_port = DEFAULT_HTTP_TRACKER_HTTP_PORT;
-
-    public static final int DEFAULT_SECTION_SIZE = 1024; //kb
-
     public static TrackerGroup g_tracker_group;
 
     private ClientGlobal() {

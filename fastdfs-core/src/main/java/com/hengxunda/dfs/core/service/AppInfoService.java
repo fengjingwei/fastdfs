@@ -1,6 +1,6 @@
 package com.hengxunda.dfs.core.service;
 
-import com.hengxunda.dfs.base.BaseErrorCode;
+import com.hengxunda.dfs.base.ErrorCodeEnum;
 import com.hengxunda.dfs.base.cache.CacheService;
 import com.hengxunda.dfs.core.entity.AppInfoEntity;
 import com.hengxunda.dfs.core.mapper.AppInfoMapper;
@@ -20,18 +20,15 @@ import java.util.StringJoiner;
 @Service
 public class AppInfoService {
 
-    @Autowired
-    private AppInfoMapper appInfoMapper;
-
     /**
      * 客户端的发送请求时间与服务器的时间相差超过多少秒是无效的
      */
     private static final int TIMESTAMP_ERROR_SECONDS = 2 * 60 * 60;
+    @Autowired
+    private AppInfoMapper appInfoMapper;
 
     /**
      * 将应用信息载入缓存
-     *
-     * @return
      */
     public void loadAppInfoToCache() {
         List<AppInfoEntity> appInfoEntityList = appInfoMapper.getAllAppInfo();
@@ -54,14 +51,14 @@ public class AppInfoService {
         if (appKey == null) {
             return null;
         }
-        AppInfoEntity app = CacheService.APP_INFO_CACHE.get(appKey);
-        if (app == null) {
-            app = appInfoMapper.getAppInfoByAppKey(appKey);
-            if (app != null) {
-                CacheService.APP_INFO_CACHE.put(app.getAppKey(), app);
+        AppInfoEntity appInfoEntity = CacheService.APP_INFO_CACHE.get(appKey);
+        if (appInfoEntity == null) {
+            appInfoEntity = appInfoMapper.getAppInfoByAppKey(appKey);
+            if (appInfoEntity != null) {
+                CacheService.APP_INFO_CACHE.put(appInfoEntity.getAppKey(), appInfoEntity);
             }
         }
-        return app;
+        return appInfoEntity;
     }
 
     /**
@@ -72,19 +69,19 @@ public class AppInfoService {
      * @param sign      MD5(appKey + '$' + appSecret + '$' + 时间戳)
      * @return BaseErrorCode
      */
-    public BaseErrorCode checkAuth(String appKey, String timestamp, String sign) {
-        BaseErrorCode result = BaseErrorCode.OK;
+    public ErrorCodeEnum checkAuth(String appKey, String timestamp, String sign) {
+        ErrorCodeEnum result = ErrorCodeEnum.OK;
         AppInfoEntity app = getAppInfo(appKey);
 
         if (app == null) {
             log.warn("app info not found! appKey:{}", appKey);
-            return BaseErrorCode.APP_NOT_EXIST;
+            return ErrorCodeEnum.APP_NOT_EXIST;
         }
 
         if (app.getStatus() == null || app.getStatus() != AppInfoEntity.APP_STATUS_OK) {
             log.warn("app stopped! appKey:{}", appKey);
             // 应用已停用
-            return BaseErrorCode.APP_STOPPED;
+            return ErrorCodeEnum.APP_STOPPED;
         }
 
         StringJoiner joiner = new StringJoiner("$");
@@ -93,14 +90,13 @@ public class AppInfoService {
         if (!sign.equalsIgnoreCase(md5Sign)) {
             log.warn("sign check error! appKey:{}, expect:{}, but get:{}", appKey, md5Sign, sign);
             // 签名校验失败
-            return BaseErrorCode.APP_AUTH_FAILURE;
+            return ErrorCodeEnum.APP_AUTH_FAILURE;
         }
 
         int timestampCheck = DateUtils.getSecondsToNow(timestamp);
         if (timestampCheck < 0 || timestampCheck > TIMESTAMP_ERROR_SECONDS) {
-            log.warn("timestamp error! appKey:{}, timestamp:{}, timestampCheck:{}", appKey, timestamp,
-                    timestampCheck);
-            return BaseErrorCode.TIMESTAMP_ERROR;
+            log.warn("timestamp error! appKey:{}, timestamp:{}, timestampCheck:{}", appKey, timestamp, timestampCheck);
+            return ErrorCodeEnum.TIMESTAMP_ERROR;
         }
         return result;
     }
