@@ -3,6 +3,7 @@ package com.hengxunda;
 import com.hengxunda.dfs.utils.MD5Utils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
+import org.springframework.http.HttpMethod;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -18,7 +19,7 @@ public class FastdfsCoreApplicationTests {
 
     static String appKey = "dfs";
     static String appSecret = "dfs_secret";
-    static String fileAbsPath = "E:\\test.png";
+    static String fileAbsPath = "F:\\3.png";
 
     static String newLine = "\r\n";
 
@@ -36,7 +37,7 @@ public class FastdfsCoreApplicationTests {
             URL url = new URL("http://localhost:8808/dfs/auth/v1/upload/self");
             connection = (HttpURLConnection) url.openConnection();
             // 设置为POST请求
-            connection.setRequestMethod("POST");
+            connection.setRequestMethod(HttpMethod.POST.toString());
             // 发送POST请求必须设置如下两行
             connection.setDoOutput(true);
             connection.setDoInput(true);
@@ -48,7 +49,7 @@ public class FastdfsCoreApplicationTests {
             // 设置请求头参数
             connection.setRequestProperty("connectionection", "Keep-Alive");
             connection.setRequestProperty("Content-Length", String.valueOf(fis.available()));
-            connection.setRequestProperty("Charsert", "UTF-8");
+            connection.setRequestProperty("Charsert", StandardCharsets.UTF_8.toString());
             connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
 
             // -------------开始设置鉴权参数-------------
@@ -75,7 +76,7 @@ public class FastdfsCoreApplicationTests {
 
             // 数据输入流,用于读取文件数据
             in = new BufferedInputStream(fis);
-            byte[] bufferOut = new byte[1024 * 1024];
+            byte[] bufferOut = new byte[1024 * 1024 * 10];
             int bytes;
             // 每次读1MB数据,并且将文件数据写入到输出流中
             while ((bytes = in.read(bufferOut)) > 0) {

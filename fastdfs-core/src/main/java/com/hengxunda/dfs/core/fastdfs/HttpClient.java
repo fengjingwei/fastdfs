@@ -20,13 +20,13 @@ import java.util.concurrent.*;
 public class HttpClient {
 
     /**
-     * 大于1M分批上传
+     * 大于10M分批上传
      */
-    private static final int NEED_BATCH_UPLOAD_SIZE = 1024 * 1024;
+    private static final int NEED_BATCH_UPLOAD_SIZE = 1024 * 1024 * 10;
     /**
      * 上传缓存
      */
-    private static final int UPLOAD_BUFFER_SIZE = 1024 * 1024;
+    private static final int UPLOAD_BUFFER_SIZE = 1024 * 1024 * 10;
     /**
      * 下载缓存，这里只有http下载，所有将缓存设小，所以也不适应大于10M的文件下载
      */

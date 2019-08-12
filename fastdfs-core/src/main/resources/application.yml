@@ -14,8 +14,8 @@ spring:
       max-request-size: ${spring.servlet.multipart.max-file-size}
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.0.21:3306/fastdfs?characterEncoding=utf8&useSSL=false
-    username: block
+    url: jdbc:mysql://192.168.1.139:3306/fastdfs?characterEncoding=utf8&useSSL=false
+    username: root
     password: 123456
     dbcp2:
       initial-size: 20
@@ -40,7 +40,7 @@ logging:
     com.hengxunda.dfs: DEBUG
 
 fastdfs:
-  tracker_servers: 192.168.0.4:22122
+  tracker_servers: 192.168.1.222:22122
   connect_timeout_in_seconds: 10
   network_timeout_in_seconds: 30
   charset: utf-8
