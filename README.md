@@ -55,4 +55,4 @@
 
 ## Support ##
 - 如有任何问题欢迎微我
-- ![](https://i.imgur.com/fy8rXP4.jpg)
+- ![](https://github.com/fengjingwei/Docs/raw/master/wechat.jpg)
