@@ -41,18 +41,18 @@
 3. Git版本控制
 
 ## Quick Start ##
-- If work: FastDFS在CentOS下配置安装部署，参考教程[http://blog.mayongfa.cn/192.html](http://blog.mayongfa.cn/192.html)
+- If work: FastDFS在CentOS下配置安装部署，参考教程[https://www.cnblogs.com/handsomeye/p/9451568.html](hhttps://www.cnblogs.com/handsomeye/p/9451568.html)
 
 - Clone & Build
 > git clone https://github.com/fengjingwei/fastdfs.git
 > 
 > cd fastdfs
 > 
-> mvn -DskipTests clean install -U
+> mvn clean install -DskipTests -U
 
 - execute sql
 > [https://github.com/fengjingwei/fastdfs/blob/master/sql/dfs_create_tables.sql](https://github.com/fengjingwei/fastdfs/blob/master/sql/dfs_create_tables.sql)
 
 ## Support ##
 - 如有任何问题欢迎微我
-- ![](https://github.com/fengjingwei/Docs/raw/master/wechat.jpg)
+- ![](https://raw.githubusercontent.com/fengjingwei/fastdfs/master/doc/wechat.jpg)
