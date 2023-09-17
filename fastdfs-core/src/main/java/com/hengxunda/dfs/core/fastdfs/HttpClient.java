@@ -31,20 +31,20 @@ public class HttpClient {
      * 下载缓存，这里只有http下载，所有将缓存设小，所以也不适应大于10M的文件下载
      */
     private static final int DOWNLOAD_BUFFER_SIZE = 128 * 1024;
-    private static HttpClient instance = new HttpClient();
-    private InitializeConfig config = SpringContextHolder.getBean(InitializeConfig.class);
-    private int uploadThreadSize = config.getUpload();
+    private final static HttpClient INSTANCE = new HttpClient();
+    private final InitializeConfig config = SpringContextHolder.getBean(InitializeConfig.class);
+    private final int uploadThreadSize = config.getUpload();
 
-    private TrackerClient trackerClient;
+    private final TrackerClient trackerClient;
 
     private String trackerServers = null;
 
-    private ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("DFS-UPLOAD-TASK-THREAD-%d").build();
+    private final ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("DFS-UPLOAD-TASK-THREAD-%d").build();
 
     /**
      * 处理上传任务的线程池
      */
-    private ExecutorService uploadExecutorService = new ThreadPoolExecutor(uploadThreadSize, uploadThreadSize, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+    private final ExecutorService uploadExecutorService = new ThreadPoolExecutor(uploadThreadSize, uploadThreadSize, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
 
     private HttpClient() {
         try {
@@ -62,7 +62,7 @@ public class HttpClient {
     }
 
     public static HttpClient getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public String getTrackersConfig() {
@@ -223,11 +223,8 @@ public class HttpClient {
         String fileId = null;
         try {
             long length = in.available();
-            boolean isSetGroup = false;
-            if (StringUtils.isNotEmpty(groupName)) {
-                // 上传到指定的组（卷）
-                isSetGroup = true;
-            }
+            boolean isSetGroup = StringUtils.isNotEmpty(groupName);
+            // 上传到指定的组（卷）
             // 超过指定大小就进行分批上传
             if (length > NEED_BATCH_UPLOAD_SIZE) {
                 if (!(in instanceof BufferedInputStream)) {

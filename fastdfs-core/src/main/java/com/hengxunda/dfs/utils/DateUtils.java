@@ -18,7 +18,7 @@ public abstract class DateUtils {
     public static int getSecondsToNow(String strfromMillis) {
         long fromMillis = -1;
         try {
-            fromMillis = Long.valueOf(strfromMillis);
+            fromMillis = Long.parseLong(strfromMillis);
         } catch (Exception ignored) {
         }
         if (fromMillis < 0) {

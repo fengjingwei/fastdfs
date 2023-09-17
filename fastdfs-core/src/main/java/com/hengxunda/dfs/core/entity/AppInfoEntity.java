@@ -2,12 +2,14 @@ package com.hengxunda.dfs.core.entity;
 
 import com.hengxunda.dfs.base.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
 /**
  * 第三方应用信息
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class AppInfoEntity extends BaseEntity implements Serializable {
 

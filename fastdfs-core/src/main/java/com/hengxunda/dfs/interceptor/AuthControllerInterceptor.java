@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class AuthControllerInterceptor extends BaseController implements HandlerInterceptor {
 
-    private AppInfoService appInfoService = SpringContextHolder.getBean(AppInfoService.class);
+    private final AppInfoService appInfoService = SpringContextHolder.getBean(AppInfoService.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

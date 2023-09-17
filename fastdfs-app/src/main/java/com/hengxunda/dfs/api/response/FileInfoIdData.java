@@ -16,7 +16,7 @@ public class FileInfoIdData {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public class FileInfoId {
+    public static class FileInfoId {
 
         public Integer fileInfoId;
     }

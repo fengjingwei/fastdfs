@@ -36,17 +36,14 @@ public class DFSAppClient {
      * 线程池大小
      */
     private static int CORE_THREAD_SIZE = 5;
-    private static String GET_SERVER_URL = null;
     private static String START_UPLOAD_URL = null;
     private static String END_UPLOAD_URL = null;
     private static String DELETE_URL = null;
     private static String DOWNLOAD_URL = null;
 
-    private static DFSAppClient instance = new DFSAppClient();
+    private static final DFSAppClient INSTANCE = new DFSAppClient();
 
     private TrackerClient trackerClient = null;
-
-    private APIConfigure config = null;
 
     private String clientAppKey;
     private String clientGroupName;
@@ -54,7 +51,7 @@ public class DFSAppClient {
     private ExecutorService executorService = null;
 
     public static DFSAppClient instance() {
-        return instance;
+        return INSTANCE;
     }
 
     /**
@@ -64,40 +61,39 @@ public class DFSAppClient {
      */
     public void initAPIConfigure(APIConfigure config) throws MyException {
         try {
-            this.config = config;
 
-            if (this.config.getUploadBufferSize() > 0) {
-                UPLOAD_BUFFER_SIZE = this.config.getUploadBufferSize();
+            if (config.getUploadBufferSize() > 0) {
+                UPLOAD_BUFFER_SIZE = config.getUploadBufferSize();
                 NEED_BATCH_UPLOAD_SIZE = UPLOAD_BUFFER_SIZE;
             }
 
-            if (this.config.getDownloadBufferSize() > 0) {
-                DOWNLOAD_BUFFER_SIZE = this.config.getDownloadBufferSize();
+            if (config.getDownloadBufferSize() > 0) {
+                DOWNLOAD_BUFFER_SIZE = config.getDownloadBufferSize();
             }
 
-            if (this.config.getCoreThreadSize() > 0) {
-                CORE_THREAD_SIZE = this.config.getCoreThreadSize();
+            if (config.getCoreThreadSize() > 0) {
+                CORE_THREAD_SIZE = config.getCoreThreadSize();
             }
 
             ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("DFS-HTTP-TASK-THREAD-%d").build();
             executorService = new ThreadPoolExecutor(CORE_THREAD_SIZE, CORE_THREAD_SIZE, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
 
-            if (this.config.getHttpServerUrl() == null || this.config.getHttpServerUrl().trim().length() == 0) {
+            if (config.getHttpServerUrl().trim().length() == 0) {
                 throw new MyException("init server error, http server url is empty!");
             }
 
-            String baseServerUrl = this.config.getHttpServerUrl();
+            String baseServerUrl = config.getHttpServerUrl();
             if (!baseServerUrl.endsWith("/")) {
                 baseServerUrl += "/";
             }
 
-            GET_SERVER_URL = baseServerUrl + V1_SERVER;
+            String GET_SERVER_URL = baseServerUrl + V1_SERVER;
             START_UPLOAD_URL = baseServerUrl + V1_SUPLOAD;
             END_UPLOAD_URL = baseServerUrl + V1_EUPLOAD;
             DELETE_URL = baseServerUrl + V1_DELETE;
             DOWNLOAD_URL = baseServerUrl + V1_DOWNLOAD;
 
-            clientAppKey = this.config.getAppKey();
+            clientAppKey = config.getAppKey();
             ServerData serverData = APIHttpUtils.getServerInfo(GET_SERVER_URL, clientAppKey);
             clientGroupName = serverData.getBody().getGroupName();
             if (StringUtils.isEmpty(clientAppKey) || StringUtils.isEmpty(clientGroupName)) {
@@ -132,8 +128,7 @@ public class DFSAppClient {
     private StorageClient1 assignResourseByFileId(String fileId) throws MyException {
         StorageClient1 client = new StorageClient1();
         try {
-            if (client.getTrackerServer() == null
-                    || (client.getTrackerServer() != null && client.getTrackerServer().getSocket().isClosed())) {
+            if (client.getTrackerServer() == null || (client.getTrackerServer() != null && client.getTrackerServer().getSocket().isClosed())) {
                 TrackerServer trackerServer = trackerClient.getConnection();
                 if (trackerServer == null) {
                     throw new MyException("can't get trackerServer!");
@@ -141,13 +136,11 @@ public class DFSAppClient {
                 client.setTrackerServer(trackerServer);
             }
 
-            if (client.getStorageServer() == null
-                    || (client.getStorageServer() != null && client.getStorageServer().getSocket().isClosed())) {
+            if (client.getStorageServer() == null || (client.getStorageServer() != null && client.getStorageServer().getSocket().isClosed())) {
                 StorageServer storageServer;
                 if (fileId != null && fileId.length() > 0) {
                     int pos = fileId.indexOf(StorageClient1.SPLIT_GROUP_NAME_AND_FILENAME_SEPERATOR);
-                    storageServer = trackerClient.getFetchStorage(client.getTrackerServer(), fileId.substring(0, pos),
-                            fileId.substring(pos + 1));
+                    storageServer = trackerClient.getFetchStorage(client.getTrackerServer(), fileId.substring(0, pos), fileId.substring(pos + 1));
                 } else {
                     storageServer = trackerClient.getStoreStorage(client.getTrackerServer(), null);
                 }
@@ -178,16 +171,14 @@ public class DFSAppClient {
         }
         StorageClient1 client = new StorageClient1();
         try {
-            if (client.getTrackerServer() == null
-                    || (client.getTrackerServer() != null && client.getTrackerServer().getSocket().isClosed())) {
+            if (client.getTrackerServer() == null || (client.getTrackerServer() != null && client.getTrackerServer().getSocket().isClosed())) {
                 TrackerServer trackerServer = trackerClient.getConnection();
                 if (trackerServer == null) {
                     throw new MyException("can't get trackerServer!");
                 }
                 client.setTrackerServer(trackerServer);
             }
-            if (client.getStorageServer() == null
-                    || (client.getStorageServer() != null && client.getStorageServer().getSocket().isClosed())) {
+            if (client.getStorageServer() == null || (client.getStorageServer() != null && client.getStorageServer().getSocket().isClosed())) {
                 StorageServer storageServer = trackerClient.getStoreStorage(client.getTrackerServer(), groupName);
                 if (storageServer == null) {
                     releaseResource(client);
@@ -302,11 +293,8 @@ public class DFSAppClient {
         StorageClient1 client = null;
         String fileId = null;
         try {
-            boolean isSetGroup = false;
-            if (StringUtils.isNotEmpty(groupName)) {
-                // 上传到指定的组（卷）
-                isSetGroup = true;
-            }
+            boolean isSetGroup = StringUtils.isNotEmpty(groupName);
+            // 上传到指定的组（卷）
             if (isSetGroup) {
                 client = assignResourceByGroupName(groupName);
             } else {
@@ -471,7 +459,7 @@ public class DFSAppClient {
     }
 
     @AllArgsConstructor
-    class EndUpLoadHttpTask implements Runnable {
+    static class EndUpLoadHttpTask implements Runnable {
 
         private String url;
 
@@ -486,7 +474,7 @@ public class DFSAppClient {
     }
 
     @AllArgsConstructor
-    class DeleteHttpTask implements Runnable {
+    static class DeleteHttpTask implements Runnable {
 
         private String url;
 

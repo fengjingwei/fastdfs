@@ -2,12 +2,14 @@ package com.hengxunda.dfs.core.entity;
 
 import com.hengxunda.dfs.base.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
 /**
  * 文件信息
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class FileInfoEntity extends BaseEntity implements Serializable {
     /**

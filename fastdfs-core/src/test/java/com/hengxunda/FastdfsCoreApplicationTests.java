@@ -17,11 +17,11 @@ public class FastdfsCoreApplicationTests {
     public static final String HEADER_TIMESTAMP = "dfs-request-timestamp"; // 时间戳
     public static final String HEADER_SIGN = "dfs-request-sign"; // 签名
 
-    static String appKey = "dfs";
-    static String appSecret = "dfs_secret";
-    static String fileAbsPath = "F:\\3.png";
+    static final String appKey = "dfs";
+    static final String appSecret = "dfs_secret";
+    static final String fileAbsPath = "F:\\3.png";
 
-    static String newLine = "\r\n";
+    static final String newLine = "\r\n";
 
     public static void testUpload() {
         BufferedInputStream in = null;
@@ -61,17 +61,16 @@ public class FastdfsCoreApplicationTests {
 
             // 上传文件
             out = new BufferedOutputStream(connection.getOutputStream());
-            StringBuilder sb = new StringBuilder();
-            sb.append(boundaryPrefix);
-            sb.append(BOUNDARY);
-            sb.append(newLine);
-            // 文件参数,photo参数名可以随意修改
-            sb.append("Content-Disposition: form-data; name=\"file\"; filename=\"" + file.getName() + "\"" + newLine);
-            // 参数头设置完以后需要两个换行，然后才是参数内容
-            sb.append(newLine);
+            String sb = boundaryPrefix +
+                    BOUNDARY +
+                    newLine +
+                    // 文件参数,photo参数名可以随意修改
+                    "Content-Disposition: form-data; name=\"file\"; filename=\"" + file.getName() + "\"" + newLine +
+                    // 参数头设置完以后需要两个换行，然后才是参数内容
+                    newLine;
 
             // 将参数头的数据写入到输出流中
-            out.write(sb.toString().getBytes(StandardCharsets.UTF_8));
+            out.write(sb.getBytes(StandardCharsets.UTF_8));
             out.flush();
 
             // 数据输入流,用于读取文件数据
@@ -111,12 +110,11 @@ public class FastdfsCoreApplicationTests {
     }
 
     private static String appendSeq(String appKey, String appSecret, String timestamp) {
-        String seq = appKey +
+        return appKey +
                 "$" +
                 appSecret +
                 "$" +
                 timestamp;
-        return seq;
     }
 
     public static void main(String[] args) {
